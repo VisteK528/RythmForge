@@ -3,4 +3,12 @@ cmake_minimum_required(VERSION 3.20..3.27)
 
 FILE(GLOB_RECURSE SRC "src/*.cpp")
 
-add_executable(rythm_forge_cpp main.cpp ${SRC})
+add_executable(rythm_forge_cpp_exe main.cpp ${SRC})
+
+ADD_LIBRARY(
+        RythmForgeLoadCpp ${SRC}
+)
+set_target_properties(RythmForgeLoadCpp PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+pybind11_add_module(rythm_forge_load_py modules/load_module.cpp)
+target_link_libraries(rythm_forge_load_py PRIVATE RythmForgeLoadCpp)

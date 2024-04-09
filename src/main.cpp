@@ -13,6 +13,9 @@ int main() {
     }
 
     WaveHeader my_header = getFileProperties(my_file, 0);
+
+    std::pair<std::vector<double>, unsigned int> data = readSamplesMono(my_file, my_header);
+
     my_file.close();
     return 0;
 }
