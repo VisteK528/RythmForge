@@ -64,13 +64,14 @@ WaveHeader getFileProperties(std::ifstream& raw_data, unsigned int start_index){
     }
 
     while(1){
-        pattern.pop_back();
-        pattern.insert(pattern.begin(), readBytes(raw_data, 1)[0]);
         if(pattern == data_pattern){
             header.subchunk2ID = data_pattern;
             break;
         }
+        pattern.pop_back();
+        pattern.insert(pattern.begin(), readBytes(raw_data, 1)[0]);
         ++header.data_start;
+
     }
     header.subchunk2Size = toLittleEndian(readBytes(raw_data, waveFieldsMap["subchunk2Size"]));
 

@@ -2,5 +2,8 @@ cmake-build-debug/
 cmake-build-release/
 data/
 .idea/
+build/
+rythm_forge.egg-info/
+rythm_forge/__pycache__/
 rythm_forge_python/.idea/
 rythm_forge_python/test.ipynb

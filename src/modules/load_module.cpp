@@ -31,7 +31,7 @@ py::tuple readBytesAsNumPy(py::object raw_data) {
 
 
 // Define Python module
-PYBIND11_MODULE(rythm_forge_load_py, m) {
+PYBIND11_MODULE(rythm_forge_load_cpp, m) {
     m.doc() = "This is a simple doc";
     m.def("read_bytes", &readBytesAsNumPy, "Read bytes from file and return as NumPy array");
 }
