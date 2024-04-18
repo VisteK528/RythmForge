@@ -1,5 +1,11 @@
+#include <numeric>
 #include "../../include/core/pcm.hpp"
 
+PCMData::PCMData(std::unique_ptr<std::vector<std::vector<double>>> samples, unsigned int sampleRate): samples_(std::move(samples)), sampleRate_(sampleRate) {
+    if(this->samples_){
+        this->numChannels_ = samples_->at(0).size();
+    }
+}
 PCMData::PCMData(const PCMData& other) : sampleRate_(other.sampleRate_) {
     if (other.samples_) {
         samples_ = std::make_unique<std::vector<std::vector<double>>>(*other.samples_);
@@ -19,4 +25,15 @@ unsigned int PCMData::getSampleRate() const {
 
 const std::unique_ptr<std::vector<std::vector<double>>> &PCMData::getSamples() const {
     return this->samples_;
+}
+
+void PCMData::toMono() {
+    if(this->numChannels_ > 1){
+        long int index = 0;
+        for(std::vector<double>& channelSamples: *this->samples_){
+            double averageAcrossChannels = std::accumulate(channelSamples.cbegin(), channelSamples.cend(), 0.0) / static_cast<double>(channelSamples.size());
+            this->samples_->at(index) = {averageAcrossChannels};
+            ++index;
+        }
+    }
 }
