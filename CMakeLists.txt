@@ -15,3 +15,6 @@ find_package(pybind11 REQUIRED)
 set(PYBIND11_FINDPYTHON ON)
 
 add_subdirectory(src)
+
+include(CTest)
+enable_testing()

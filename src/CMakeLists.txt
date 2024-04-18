@@ -18,3 +18,6 @@ target_compile_definitions(rythm_forge_load_cpp
 pybind11_add_module(rythm_forge_core_cpp modules/core_module.cpp)
 target_compile_definitions(rythm_forge_core_cpp
         PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
+
+# Unit tests
+add_subdirectory(tests)
