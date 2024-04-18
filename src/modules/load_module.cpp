@@ -1,37 +1,43 @@
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-
-#include "../include/load_wave.hpp"
+#include "../include/load/load_wave.hpp"
 
 namespace py = pybind11;
 
 
-// Function to wrap readBytes and return result as NumPy array
 py::tuple readBytesAsNumPy(py::object raw_data) {
-    // Convert Python file object to C++ ifstream
     std::ifstream file;
 
     file.open(py::str(raw_data), std::ios::binary);
 
-    // file.open("../data/arcade.wav", std::ios::binary);
+    WaveLoader loader;
+    auto optional_data = loader.loadPCMData(file);
+    if(!optional_data.has_value()){
+        throw std::runtime_error("An error has occured!");
+    }
 
-    // Call readBytes function
-
-    WaveHeader my_header = getFileProperties(file, 0);
-    std::pair<std::vector<double>, unsigned int> data = readSamplesMono(file, my_header);
-
-    // Close the file
+    PCMData data = optional_data.value();
     file.close();
 
-    // Create NumPy array from the std::vector<byte>
-    py::array_t<double> samples_array(data.first.size(), data.first.data());
-    return py::make_tuple(samples_array, data.second);
+    const std::unique_ptr<std::vector<std::vector<double>>>& samples = data.getSamples();
+    unsigned int sampleRate = data.getSampleRate();
+    size_t numChannels = samples->at(0).size();
+
+    // Constructing NumPy arrays
+    py::array_t<double> numpyArray({numChannels, samples->size()});
+    auto numpyArrayData = numpyArray.mutable_unchecked<2>();
+    for(size_t i = 0; i < numChannels; ++i){
+        for(size_t j = 0; j < samples->size(); ++j){
+            numpyArrayData(i, j) = samples->at(j)[i];
+        }
+    }
+
+    return py::make_tuple(numpyArray, sampleRate);
 }
 
 
 // Define Python module
 PYBIND11_MODULE(rythm_forge_load_cpp, m) {
-    m.doc() = "This is a simple doc";
-    m.def("read_bytes", &readBytesAsNumPy, "Read bytes from file and return as NumPy array");
+    m.doc() = "RythmForge audio files loading module";
+    m.def("loadWavFile", &readBytesAsNumPy, "Reads samples from .wav file and returns them with sample rate");
 }

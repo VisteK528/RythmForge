@@ -8,7 +8,7 @@ __version__ = "0.0.0"
 ext_modules = [
     Pybind11Extension(
         "rythm_forge.lib.rythm_forge_load_cpp",
-        sorted(glob("src/src/*.cpp") + ["src/modules/load_module.cpp"]),
+        sorted(glob("src/src/core/*.cpp") + glob("src/src/load/*.cpp") + ["src/modules/load_module.cpp"]),
         cxx_std=20,
     ),
 ]

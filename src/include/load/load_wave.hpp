@@ -5,9 +5,9 @@
 #include <map>
 #include <iostream>
 #include <fstream>
-
-
-typedef unsigned char byte;
+#include <optional>
+#include "../../include/core/core.hpp"
+#include "../../include/core/pcm.hpp"
 
 static std::map<std::string, uint8_t> waveFieldsMap = {
         {"chunkID", 4},
@@ -43,14 +43,17 @@ struct WaveHeader{
 
     std::vector<byte> subchunk2ID;                // When read properly always equal to 'data'
     unsigned int subchunk2Size;         // Size of the data in bytes, numSamples * numChannels * bitsPerSample / 8
-
     unsigned int data_start;
 };
 
 
-void load_wave(const std::ifstream& raw_data);
-WaveHeader getFileProperties(std::ifstream& raw_data, unsigned int start_index);
-std::vector<byte> readBytes(std::ifstream& raw_data, unsigned int data_length);
-std::pair<std::vector<double>, unsigned int> readSamplesMono(std::ifstream& raw_data, WaveHeader& header);
+class WaveLoader{
+private:
+    static int readChannel(std::ifstream& raw_data, const short bytes_per_sample);
+    std::vector<double> readSample(std::ifstream& raw_data, const short bytes_per_sample, WaveHeader& header);
+public:
+    std::optional<WaveHeader> getFileProperties(std::ifstream& file_handle);
+    std::optional<PCMData> loadPCMData(std::ifstream& file_handle);
+};
 
 #endif //RYTHMFORGE_LOAD_WAVE_HPP
