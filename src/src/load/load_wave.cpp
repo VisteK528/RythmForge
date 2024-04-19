@@ -1,5 +1,6 @@
 #include <numeric>
 #include <cmath>
+#include <algorithm>
 #include "../../include/load/load_wave.hpp"
 #include "../../include/load/load.hpp"
 

@@ -1,13 +1,11 @@
 name: rythm_forge_ci
 
 on:
-  # Triggered whenever push to the main branch
   push:
     branches:
       - "main"
       - "ci"
-
-  # Triggered whenever a pull request is created on main
+      - "feature*"
   pull_request:
     branches:
       - "main"
@@ -56,9 +54,44 @@ jobs:
             cd build/src/tests/
             ctest
 
-        - name: Install RythmForge python package & run python tests
+        - name: Install RythmForge python package
           run: |
             pip3 install .
+        - name: Run Python tests
+          run: |
+            pytest tests/
+
+  windows_build:
+      runs-on: windows-latest
+      needs: linting
+      steps:
+        - name: Setup Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.10'
+        - name: Setup workspace
+          run: |
+            python3 --version
+            pip3 install pybind11[global]
+            pip3 install pytest
+        - uses: actions/checkout@v3
+        - name: Build
+          run: |
+            mkdir build
+            cd build
+            cmake ..
+            cmake --build . --target rythm_forge_cpp_unit_tests
+
+        - name: Run Cpp tests
+          run: |
+            cd build\src\tests\
+            ctest
+
+        - name: Install RythmForge python package
+          run: |
+            pip3 install .
+        - name: Run Python tests
+          run: |
             pytest tests/
 
         
