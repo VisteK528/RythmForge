@@ -8,7 +8,15 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(PYBIND11_CPP_STANDARD -std=c++20)
 set(PYBIND11_PYTHON_VERSION 3.10)
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ../../rythm_forge/lib/)
+
+if(MSVC)
+    message("MSVC")
+else()  # GCC and Clang
+    message("GCC / Clang")
+    add_compile_options(-Wall -Wextra -pedantic -Werror)
+endif()
+
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 # Find PyBind11
 find_package(pybind11 REQUIRED)

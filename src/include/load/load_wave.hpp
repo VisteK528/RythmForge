@@ -50,7 +50,7 @@ struct WaveHeader{
 class WaveLoader{
 private:
     static int readChannel(std::ifstream& raw_data, const short bytes_per_sample);
-    std::vector<double> readSample(std::ifstream& raw_data, const short bytes_per_sample, WaveHeader& header);
+    std::vector<double> readSample(std::ifstream& raw_data, const short bytes_per_sample,const WaveHeader& header);
 public:
     std::optional<WaveHeader> getFileProperties(std::ifstream& file_handle);
     std::optional<PCMData> loadPCMData(std::ifstream& file_handle);

@@ -36,7 +36,7 @@ class CMakeBuild(build_ext):
         cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
 
         # Assuming Makefiles
-        build_args += ['--', '-j2']
+        # build_args += ['--', '-j2']
 
         self.build_args = build_args
 
@@ -65,7 +65,12 @@ class CMakeBuild(build_ext):
     def move_output(self, ext):
         build_temp = Path(self.build_temp).resolve()
         dest_path = Path(self.get_ext_fullpath(ext.name)).resolve()
-        source_path = build_temp / self.get_ext_filename(ext.name).split("/")[-1]
+        if sys.platform == "win32":
+            print("Hello there")
+            source_path = build_temp / os.path.basename(build_temp)
+            source_path /= os.path.basename(self.get_ext_filename(ext.name))
+        else:
+            source_path = build_temp / os.path.basename(self.get_ext_filename(ext.name))
         dest_directory = dest_path.parents[0]
         dest_directory.mkdir(parents=True, exist_ok=True)
         self.copy_file(source_path, dest_path)
