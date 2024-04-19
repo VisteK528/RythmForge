@@ -8,7 +8,16 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(PYBIND11_CPP_STANDARD -std=c++20)
 set(PYBIND11_PYTHON_VERSION 3.10)
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ../../rythm_forge/lib/)
+
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
+execute_process(
+        COMMAND ${Python3_EXECUTABLE} -c "import os; os.system('python3 -m site --user-site')"
+        OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+set(pybind11_DIR ${PYTHON_SITE_PACKAGES}/pybind11/include)
+message(${PYTHON_SITE_PACKAGES}/pybind11/include)
 
 # Find PyBind11
 find_package(pybind11 REQUIRED)
