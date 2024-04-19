@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "../include/core/pcm.hpp"
+#include "include/load/pcm.hpp"
 
 TEST_CASE("Test duration estimation"){
     std::unique_ptr<std::vector<std::vector<double>>> samples = std::make_unique<std::vector<std::vector<double>>>();

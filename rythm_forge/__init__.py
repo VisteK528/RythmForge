@@ -1,12 +1,8 @@
-from .lib.rythm_forge_load_cpp import *
-from .lib.rythm_forge_core_cpp import *
+from . import core
+from . import load
+
+
+__all__ = ["core", "load"]
 
 # Optionally, add documentation or hints about the function
-__doc__ = """
-This module provides functions for loading data using Rythm Forge.
-
-Available functions:
-- read_bytes: Load audio data from bytes.
-"""
-
-
+__doc__ = "RythmForge audio&music processing library"

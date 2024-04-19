@@ -7,7 +7,7 @@
 #include <fstream>
 #include <optional>
 #include "../../include/core/core.hpp"
-#include "../../include/core/pcm.hpp"
+#include "pcm.hpp"
 
 static std::map<std::string, uint8_t> waveFieldsMap = {
         {"chunkID", 4},

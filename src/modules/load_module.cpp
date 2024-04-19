@@ -5,7 +5,7 @@
 namespace py = pybind11;
 
 
-py::tuple readBytesAsNumPy(py::object raw_data) {
+py::tuple readPCMData(py::object& raw_data) {
     std::ifstream file;
 
     file.open(py::str(raw_data), std::ios::binary);
@@ -35,9 +35,40 @@ py::tuple readBytesAsNumPy(py::object raw_data) {
     return py::make_tuple(numpyArray, sampleRate);
 }
 
+py::array_t<double> converToMono(py::array_t<double>& input_samples){
+    auto r = input_samples.unchecked<2>();
+    size_t channels = r.shape(0);
+    size_t samples_len = r.shape(1);
+
+    auto result = std::make_unique<std::vector<std::vector<double>>>(samples_len, std::vector<double>(channels));
+
+    for (size_t i = 0; i < samples_len; ++i) {
+        for (size_t j = 0; j < channels; ++j) {
+            (*result)[i][j] = r(j, i);
+        }
+    }
+
+    PCMData data(std::move(result), 44100);
+    data.toMono();
+
+    const std::unique_ptr<std::vector<std::vector<double>>>& samples = data.getSamples();
+    size_t numChannels = samples->at(0).size();
+
+    // Constructing NumPy arrays
+    py::array_t<double> numpyArray({numChannels, samples->size()});
+    auto numpyArrayData = numpyArray.mutable_unchecked<2>();
+    for(size_t i = 0; i < numChannels; ++i){
+        for(size_t j = 0; j < samples->size(); ++j){
+            numpyArrayData(i, j) = samples->at(j)[i];
+        }
+    }
+    return numpyArray;
+}
+
 
 // Define Python module
 PYBIND11_MODULE(rythm_forge_load_cpp, m) {
     m.doc() = "RythmForge audio files loading module";
-    m.def("loadWavFile", &readBytesAsNumPy, "Reads samples from .wav file and returns them with sample rate");
+    m.def("load_wav_file", &readPCMData, "Reads samples from .wav file and returns them with sample rate");
+    m.def("to_mono", &converToMono);
 }

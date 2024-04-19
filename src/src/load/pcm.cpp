@@ -1,5 +1,5 @@
 #include <numeric>
-#include "../../include/core/pcm.hpp"
+#include "../../include/load/pcm.hpp"
 
 PCMData::PCMData(std::unique_ptr<std::vector<std::vector<double>>> samples, unsigned int sampleRate): samples_(std::move(samples)), sampleRate_(sampleRate) {
     if(this->samples_){

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <memory>
-#include "core.hpp"
+#include "../../include/core/core.hpp"
 
 
 class PCMData{

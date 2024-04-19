@@ -4,7 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from setuptools import Extension, setup
+from setuptools import Extension, setup, find_packages
 from setuptools.command.build_ext import build_ext
 
 __version__ = "0.0.0"
@@ -78,7 +78,7 @@ setup(
     author_email="piotrpatek17@gmail.com baraniak.damian@gmail.com",
     description="RythmForge audio&music processing library",
     url="https://github.com/VisteK528/RythmForge",
-    packages=["rythm_forge"],
+    packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
@@ -90,8 +90,8 @@ setup(
         "matplotlib>=3.4",
         "pybind11"
     ],
-    ext_modules=[CMakeExtension("rythm_forge.lib.rythm_forge_load_cpp"),
-                 CMakeExtension("rythm_forge.lib.rythm_forge_core_cpp")],
+    ext_modules=[CMakeExtension("rythm_forge._lib.rythm_forge_load_cpp"),
+                 CMakeExtension("rythm_forge._lib.rythm_forge_core_cpp")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
 )
