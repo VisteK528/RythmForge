@@ -8,6 +8,7 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(PYBIND11_CPP_STANDARD -std=c++20)
 set(PYBIND11_PYTHON_VERSION 3.10)
+add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 

@@ -15,7 +15,7 @@ std::vector<byte> readBytes(std::ifstream& raw_data, unsigned int data_length){
     std::vector<byte> bytes;
     bytes.reserve(data_length);
 
-    for(auto i = 0; i < data_length; ++i){
+    for(unsigned int i = 0; i < data_length; ++i){
         byte value = 0;
         raw_data >> value;
         bytes.push_back(value);

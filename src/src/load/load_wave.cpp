@@ -125,8 +125,12 @@ WaveHeader getFileProperties(std::ifstream& raw_data){
 
 
 int WaveLoader::readChannel(std::ifstream &raw_data, const short bytes_per_sample) {
-    char data[bytes_per_sample];
-    raw_data.read(data, bytes_per_sample);
+    std::unique_ptr<char[]> data(new char[bytes_per_sample]);
+    for(auto i = 0; i < bytes_per_sample; i++){
+        char read_byte = 0;
+        raw_data.read(&read_byte, 1);
+        data[i] = read_byte;
+    }
 
     uint16_t raw_value = static_cast<unsigned char>(data[0]) | static_cast<unsigned char>(data[1]) << 8;
 
