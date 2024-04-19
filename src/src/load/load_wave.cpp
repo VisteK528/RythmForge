@@ -66,10 +66,9 @@ std::optional<PCMData> WaveLoader::loadPCMData(std::ifstream &file_handle) {
     int i = 0;
     while(data_size > 0){
         std::vector<double> sample_vec = readSample(file_handle, bytes_per_sample, header);
-        for(double& sample: sample_vec){
-            sample /= 32767.;
-        }
+        auto divideBy = [](double val) { return val / 32767.; };
 
+        std::transform(sample_vec.begin(), sample_vec.end(), sample_vec.begin(), divideBy);
         // double sample = (sample_vec[0] + sample_vec[1])/ static_cast<double>(sample_vec.size()) / 32767.;
 
         // std::cout<<sample<<std::endl;
@@ -140,7 +139,7 @@ int WaveLoader::readChannel(std::ifstream &raw_data, const short bytes_per_sampl
     return value;
 }
 
-std::vector<double> WaveLoader::readSample(std::ifstream& raw_data, const short bytes_per_sample, WaveHeader& header){
+std::vector<double> WaveLoader::readSample(std::ifstream& raw_data, const short bytes_per_sample, const WaveHeader& header){
     std::vector<double> channels;
     channels.reserve(header.numChannels);
     for (int i = 0; i < header.numChannels; ++i) {

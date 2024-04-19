@@ -8,10 +8,11 @@ PCMData::PCMData(std::unique_ptr<std::vector<std::vector<double>>> samples, unsi
 }
 PCMData::PCMData(const PCMData& other) : sampleRate_(other.sampleRate_) {
     if (other.samples_) {
-        samples_ = std::make_unique<std::vector<std::vector<double>>>(*other.samples_);
+        this->samples_ = std::make_unique<std::vector<std::vector<double>>>(*other.samples_);
+        this->numChannels_ = samples_->at(0).size();
     }
     else {
-        samples_ = nullptr;
+        this->samples_ = nullptr;
     }
 }
 
