@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.20..3.27)
 
+enable_testing()
 get_filename_component(PARENT_DIR ../ ABSOLUTE)
 include_directories(${PARENT_DIR})
 
@@ -7,4 +8,4 @@ include_directories(${PARENT_DIR})
 FILE(GLOB_RECURSE LOAD_SRC "../src/load/*.cpp")
 
 add_executable(test_pcm test_pcm.cpp ${LOAD_SRC})
-add_test(PCM_unit_tests test_pcm WORKING_DIRECTORY<${PARENT_DIR})
+add_test(PCM_unit_tests test_pcm WORKING_DIRECTORY:${PARENT_DIR})

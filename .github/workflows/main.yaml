@@ -1,0 +1,57 @@
+name: rythm_forge_ci
+
+on:
+  # Triggered whenever push to the main branch
+  push:
+    branches:
+      - "main"
+      - "ci"
+
+  # Triggered whenever a pull request is created on main
+  pull_request:
+    branches:
+      - "main"
+      - "ci"
+    types: [opened]
+
+
+jobs:
+  linting:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Setup workspace
+        run: |
+          sudo apt update
+          sudo apt install python3.10
+          sudo apt-get install cppcheck
+          pip3 install ruff
+      - uses: actions/checkout@v3
+      - name: Cpp linting
+        run: |
+          cppcheck --enable=all --std=c++20 --suppress=missingIncludeSystem --suppress=unusedFunction src/src/ src/modules/
+      - name: Python linting
+        run: |
+          ruff check rythm_forge/
+
+  ubuntu_build:
+      runs-on: ubuntu-22.04
+      needs: linting
+      steps:
+        - name: Setup workspace
+          run: |
+            sudo apt update
+            sudo apt install python3.10
+            pip3 install pybind11
+        - uses: actions/checkout@v3
+        - name: Build
+          run: |
+            mkdir -p build
+            cd build
+            cmake ..
+            cmake --build . --target test*
+        
+
+
+
+
+
