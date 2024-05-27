@@ -5,7 +5,7 @@ std::vector<cx> fft(std::vector<cx> a){
         return a;
     }
     else{
-        long m = a.size() / 2;
+        long m = round(a.size() / 2);
 
         std::vector<cx> even;
         std::vector<cx> odd;
