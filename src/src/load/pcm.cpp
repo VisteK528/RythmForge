@@ -1,15 +1,15 @@
 #include <numeric>
 #include "../../include/load/pcm.hpp"
 
-PCMData::PCMData(std::unique_ptr<std::vector<std::vector<double>>> samples, unsigned int sampleRate): samples_(std::move(samples)), sampleRate_(sampleRate) {
+PCMData::PCMData(std::unique_ptr<mdarray > samples, unsigned int sampleRate): samples_(std::move(samples)), sampleRate_(sampleRate) {
     if(this->samples_){
-        this->numChannels_ = samples_->at(0).size();
+        this->numChannels_ = samples_->shape()[0];
     }
 }
 PCMData::PCMData(const PCMData& other) : sampleRate_(other.sampleRate_) {
     if (other.samples_) {
-        this->samples_ = std::make_unique<std::vector<std::vector<double>>>(*other.samples_);
-        this->numChannels_ = samples_->at(0).size();
+        this->samples_ = std::make_unique<mdarray>(*other.samples_);
+        this->numChannels_ = samples_->shape()[0];
     }
     else {
         this->samples_ = nullptr;
@@ -24,17 +24,18 @@ unsigned int PCMData::getSampleRate() const {
     return this->sampleRate_;
 }
 
-const std::unique_ptr<std::vector<std::vector<double>>> &PCMData::getSamples() const {
+const std::unique_ptr<mdarray> &PCMData::getSamples() const {
     return this->samples_;
 }
 
 void PCMData::toMono() {
     if(this->numChannels_ > 1){
-        long int index = 0;
-        for(std::vector<double>& channelSamples: *this->samples_){
-            double averageAcrossChannels = std::accumulate(channelSamples.cbegin(), channelSamples.cend(), 0.0) / static_cast<double>(channelSamples.size());
-            this->samples_->at(index) = {averageAcrossChannels};
-            ++index;
+        std::unique_ptr<mdarray> array_mono = std::make_unique<mdarray>(boost::extents[this->samples_->shape()[0]][1]);
+
+        for(size_t i = 0; i < array_mono->shape()[0]; ++i){
+            double sum = std::accumulate((*this->samples_)[i].begin(),(*this->samples_)[i].end(), 0.0) / this->samples_->shape()[1];
+            (*array_mono)[i][0] = sum;
         }
+        this->samples_ = std::move(array_mono);
     }
 }
