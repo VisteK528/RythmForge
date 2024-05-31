@@ -27,10 +27,11 @@ class CMakeBuild(build_ext):
 
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + build_directory,
-            '-DPYTHON_EXECUTABLE=' + sys.executable
+            '-DPYTHON_EXECUTABLE=' + sys.executable,
+            '-DCMAKE_TOOLCHAIN_FILE=' + os.path.join(build_directory, "conan_toolchain.cmake")
         ]
 
-        cfg = 'Debug' if self.debug else 'Release'
+        cfg = 'Release'
         build_args = ['--config', cfg]
 
         cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
@@ -46,7 +47,8 @@ class CMakeBuild(build_ext):
             self.distribution.get_version())
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-
+        subprocess.check_call(['conan', 'profile',  'detect', '--force'])
+        subprocess.check_call(['conan', 'install', '.', f'--output-folder={self.build_temp}', '--build=missing'])
         # CMakeLists.txt is in the same directory as this setup.py file
         cmake_list_dir = os.path.abspath(os.path.dirname(__file__))
         print('-'*10, 'Running CMake prepare', '-'*40)
@@ -66,7 +68,6 @@ class CMakeBuild(build_ext):
         build_temp = Path(self.build_temp).resolve()
         dest_path = Path(self.get_ext_fullpath(ext.name)).resolve()
         if sys.platform == "win32":
-            print("Hello there")
             source_path = build_temp / os.path.basename(build_temp)
             source_path /= os.path.basename(self.get_ext_filename(ext.name))
         else:

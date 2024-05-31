@@ -22,6 +22,16 @@ find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 find_package(pybind11 REQUIRED)
 set(PYBIND11_FINDPYTHON ON)
 
+
+find_package(Boost REQUIRED)
+
+if (Boost_FOUND)
+    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+    add_definitions(-DBOOST_ALL_NO_LIB)
+else()
+    message(FATAL_ERROR "Boost not found!")
+endif()
+
 add_subdirectory(src)
 
 include(CTest)

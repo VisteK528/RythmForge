@@ -5,7 +5,6 @@ add_subdirectory(tests)
 
 FILE(GLOB_RECURSE SRC_LOAD "src/load/*.cpp")
 FILE(GLOB_RECURSE SRC_CORE "src/load/*.cpp")
-FILE(GLOB_RECURSE THIRD_PARTY "src/third_party/*.hpp")
 
 # add_executable(rythm_forge_cpp_exe main.cpp ${SRC})
 

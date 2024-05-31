@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <memory>
-#include "../../third_party/multi_array.hpp"
+#include <boost/multi_array.hpp>
 #include "../../include/core/core.hpp"
 
 using mdarray = boost::multi_array<double, 2>;

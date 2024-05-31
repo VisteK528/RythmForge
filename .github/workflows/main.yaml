@@ -37,12 +37,15 @@ jobs:
             sudo apt install python3.10
             pip3 install pybind11[global]
             pip3 install pytest
+            pip3 install conan
         - uses: actions/checkout@v3
         - name: Build
           run: |
             mkdir -p build
+            conan profile detect --force
+            conan install . --output-folder=build/ --build=missing
             cd build
-            cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) ..
+            cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" ..
             cmake --build . --target rythm_forge_cpp_unit_tests
 
         - name: Run Cpp tests
@@ -70,12 +73,15 @@ jobs:
             python3 --version
             pip3 install pybind11[global]
             pip3 install pytest
+            pip3 install conan
         - uses: actions/checkout@v3
         - name: Build
           run: |
-            mkdir build
+            mkdir -p build
+            conan profile detect --force
+            conan install . --output-folder=build/ --build=missing
             cd build
-            cmake ..
+            cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" ..
             cmake --build . --target rythm_forge_cpp_unit_tests
 
         - name: Run Cpp tests
