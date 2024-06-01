@@ -60,8 +60,8 @@ std::optional<PCMData> WaveLoader::loadPCMData(std::ifstream &file_handle) {
     WaveHeader header = optional_header.value();
     short bytes_per_sample = header.bitsPerSample / 8;
 
-    std::unique_ptr<std::vector<std::vector<double>>> samples = std::make_unique<std::vector<std::vector<double>>>();
-    samples->reserve(header.subchunk2Size / header.numChannels / bytes_per_sample);
+    //std::unique_ptr<std::vector<std::vector<double>>> samples = std::make_unique<std::vector<std::vector<double>>>();
+    std::unique_ptr<mdarray> samples = std::make_unique<mdarray>(boost::extents[header.subchunk2Size / header.numChannels / bytes_per_sample][header.numChannels]);
 
     unsigned int data_size = header.subchunk2Size;
     int i = 0;
@@ -73,7 +73,7 @@ std::optional<PCMData> WaveLoader::loadPCMData(std::ifstream &file_handle) {
         // double sample = (sample_vec[0] + sample_vec[1])/ static_cast<double>(sample_vec.size()) / 32767.;
 
         // std::cout<<sample<<std::endl;
-        samples->push_back(sample_vec);
+        std::copy(sample_vec.cbegin(), sample_vec.cend(), (*samples)[i].begin());
         data_size -= header.numChannels * bytes_per_sample;
         ++i;
     }

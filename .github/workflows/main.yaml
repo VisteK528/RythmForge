@@ -2,10 +2,6 @@ name: rythm_forge_ci
 
 on:
   push:
-    branches:
-      - "main"
-      - "ci"
-      - "feature*"
   pull_request:
     branches:
       - "main"
@@ -26,7 +22,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Cpp linting
         run: |
-          cppcheck --enable=all --std=c++20 --suppress=missingIncludeSystem --suppress=unusedFunction src/src/ src/modules/
+          cppcheck --enable=all --std=c++20 --suppressions-list=config/cpp_check_suppress.cppcheck  src/src/ src/modules/
       - name: Python linting
         run: |
           ruff check rythm_forge/
@@ -41,12 +37,15 @@ jobs:
             sudo apt install python3.10
             pip3 install pybind11[global]
             pip3 install pytest
+            pip3 install conan
         - uses: actions/checkout@v3
         - name: Build
           run: |
             mkdir -p build
+            conan profile detect --force
+            conan install . --output-folder=build/ --build=missing
             cd build
-            cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) ..
+            cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" ..
             cmake --build . --target rythm_forge_cpp_unit_tests
 
         - name: Run Cpp tests
@@ -74,12 +73,15 @@ jobs:
             python3 --version
             pip3 install pybind11[global]
             pip3 install pytest
+            pip3 install conan
         - uses: actions/checkout@v3
         - name: Build
           run: |
-            mkdir build
+            mkdir -p build
+            conan profile detect --force
+            conan install . --output-folder=build/ --build=missing
             cd build
-            cmake ..
+            cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" ..
             cmake --build . --target rythm_forge_cpp_unit_tests
 
         - name: Run Cpp tests

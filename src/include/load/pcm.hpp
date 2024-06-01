@@ -3,20 +3,22 @@
 
 #include <vector>
 #include <memory>
+#include <boost/multi_array.hpp>
 #include "../../include/core/core.hpp"
 
-
+using mdarray = boost::multi_array<double, 2>;
 class PCMData{
 private:
-    std::unique_ptr<std::vector<std::vector<double>>> samples_;
+    // std::unique_ptr<std::vector<std::vector<double>>> samples_;
+    std::unique_ptr<mdarray> samples_;
     unsigned int sampleRate_;
     uint16_t numChannels_;
 public:
-    PCMData(std::unique_ptr<std::vector<std::vector<double>>> samples, unsigned int sampleRate);
+    PCMData(std::unique_ptr<mdarray> samples, unsigned int sampleRate);
     PCMData(const PCMData& other);
 
     double getDurationTime() const;
-    const std::unique_ptr<std::vector<std::vector<double>>>& getSamples() const;
+    const std::unique_ptr<mdarray>& getSamples() const;
     unsigned int getSampleRate() const;
     void toMono();
     // const std::pair<std::unique_ptr<std::vector<std::vector<byte>>>&, unsigned int> getSamplesAndSampleRate() const;
