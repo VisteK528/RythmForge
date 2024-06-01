@@ -3,10 +3,12 @@
 
 #include <complex>
 #include <vector>
+#include "core.hpp"
 
-using cx = std::complex<double>;
+namespace rythm_forge::fft{
+    std::vector<dcomplex> fft(std::vector<dcomplex> a);
+    std::vector<dcomplex> ifft(std::vector<dcomplex> a);
+}
 
-std::vector<cx> fft(std::vector<cx> a);
-std::vector<cx> ifft(std::vector<cx> a);
 
 #endif //RYTHMFORGE_FFT_HPP

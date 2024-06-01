@@ -9,41 +9,27 @@ void SimpleTest(){
     std::cout<<"Hello Mr. Bean"<<std::endl;
 }
 
-py::array_t<cx> fft_python(py::array_t<cx>& input_samples){
+py::array_t<rythm_forge::dcomplex> fft_python(py::array_t<rythm_forge::dcomplex>& input_samples){
 
-    auto input = std::vector<cx>(input_samples.size());
+    auto input = std::vector<rythm_forge::dcomplex>(input_samples.size());
 
     for (long i = 0; i < input_samples.size(); ++i) {
         input[i] = input_samples.at(i);
     }
-    std::vector<cx> result = fft(input);
-//    std::vector<double> result_abs;
-//    result_abs.reserve(result.size());
-//    for(const auto& sample: result){
-//        result_abs.push_back(abs(sample));
-//    }
-
-    // Constructing NumPy arrays
-    py::array_t<cx> numpyArray(result.size(), result.data());
+    std::vector<rythm_forge::dcomplex> result = rythm_forge::fft::fft(input);
+    py::array_t<rythm_forge::dcomplex> numpyArray(result.size(), result.data());
     return numpyArray;
 }
 
-py::array_t<cx> ifft_python(py::array_t<cx>& input_samples){
+py::array_t<rythm_forge::dcomplex> ifft_python(py::array_t<rythm_forge::dcomplex>& input_samples){
 
-    auto input = std::vector<cx>(input_samples.size());
+    auto input = std::vector<rythm_forge::dcomplex>(input_samples.size());
 
     for (long i = 0; i < input_samples.size(); ++i) {
         input[i] = input_samples.at(i);
     }
-    std::vector<cx> result = ifft(input);
-//    std::vector<double> result_abs;
-//    result_abs.reserve(result.size());
-//    for(const auto& sample: result){
-//        result_abs.push_back(abs(sample));
-//    }
-
-    // Constructing NumPy arrays
-    py::array_t<cx> numpyArray(result.size(), result.data());
+    std::vector<rythm_forge::dcomplex> result = rythm_forge::fft::ifft(input);
+    py::array_t<rythm_forge::dcomplex> numpyArray(result.size(), result.data());
     return numpyArray;
 }
 
