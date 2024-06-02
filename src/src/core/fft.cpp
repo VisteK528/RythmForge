@@ -20,7 +20,7 @@ namespace rythm_forge::fft{
     }
 
     static double hann_window(int n, int N) {
-        return 0.5 * (1 - std::cos(2 * M_PI * n / (N - 1)));
+        return 0.5 * (1 - std::cos(2 * PI * n / (N - 1)));
     }
 
     std::vector<dcomplex> fft(std::vector<dcomplex> a){
@@ -52,7 +52,7 @@ namespace rythm_forge::fft{
             even_result = fft(even);
             odd_result = fft(odd);
 
-            dcomplex w = std::exp(dcomplex(0, -2*M_PI/static_cast<double>(a.size())));
+            dcomplex w = std::exp(dcomplex(0, -2*PI/static_cast<double>(a.size())));
 
             std::vector<dcomplex> result;
             result.resize(2*m);

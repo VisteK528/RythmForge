@@ -7,6 +7,7 @@
 #include "core.hpp"
 
 namespace rythm_forge::fft{
+    const double PI = 3.14159265358979323846;
     std::vector<dcomplex> fft(std::vector<dcomplex> a);
     std::vector<dcomplex> ifft(std::vector<dcomplex> a);
 
