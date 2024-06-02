@@ -21,5 +21,9 @@ int main() {
                                                                                512, 2048,
                                                                                false);
 
+    std::unique_ptr<rythm_forge::d2array> y_hat = rythm_forge::fft::istft(stft_matrix, 2048,
+                                                                               512, 2048,
+                                                                               false);
+
     return 0;
 }

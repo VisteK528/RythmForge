@@ -26,6 +26,18 @@ static py::array_t<rythm_forge::dcomplex> assignNumpyArray(const std::unique_ptr
     return numpyArray;
 }
 
+static py::array_t<double> assignNumpyArrayDouble(const std::unique_ptr<rythm_forge::d2array>& samples, size_t numChannels){
+    py::array_t<double> numpyArray({numChannels, samples->size()});
+
+    auto numpyArrayData = numpyArray.mutable_unchecked<2>();
+    for(size_t i = 0; i < numChannels; ++i){
+        for(size_t j = 0; j < samples->size(); ++j){
+            numpyArrayData(i, j) = (*samples)[j][i];
+        }
+    }
+    return numpyArray;
+}
+
 py::array_t<rythm_forge::dcomplex> fft_python(py::array_t<rythm_forge::dcomplex>& input_samples){
 
     auto input = std::vector<rythm_forge::dcomplex>(input_samples.size());
@@ -73,10 +85,35 @@ py::array_t<rythm_forge::dcomplex> stft_python(py::array_t<double>& input_sample
     return numpyArray;
 }
 
+py::array_t<double> istft_python(py::array_t<rythm_forge::dcomplex>& input_samples){
+    auto r = input_samples.unchecked<3>();
+    size_t channels = r.shape(0);
+    size_t frequencyBins = r.shape(1);
+    size_t frames = r.shape(2);
+
+    auto result = std::make_unique<rythm_forge::c3array>(boost::extents[channels][frequencyBins][frames]);
+    for (size_t i = 0; i < channels; ++i) {
+        for (size_t j = 0; j < frequencyBins; ++j) {
+            for(size_t k = 0; k < frames; ++k){
+                (*result)[i][j][k] = r(i, j, k);
+            }
+        }
+    }
+
+
+    std::unique_ptr<rythm_forge::d2array> istftResult = rythm_forge::fft::istft(result, 2048,
+                                                                               512, 2048,
+                                                                               false);
+
+    py::array_t<rythm_forge::dcomplex> numpyArray = assignNumpyArrayDouble(istftResult, channels);
+    return numpyArray;
+}
+
 
 PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.doc() = "RythmForge core module";
     m.def("stft", &stft_python, "Short Time Fourier Transform");
+    m.def("istft", &istft_python, "Inverse Short Time Fourier Transform");
     m.def("fft", &fft_python, "Fast Fourier Transform");
     m.def("ifft", &ifft_python, "Fast Fourier Transform");
 }

@@ -3,8 +3,8 @@
 
 namespace rythm_forge::fft{
 
-    static d2array obtainFrame(const std::unique_ptr<d2array>& samples, size_t windowLength, size_t hopSize,
-                               size_t frameNumber, size_t channel){
+    static d2array obtainFrame(const std::unique_ptr<d2array>& samples, const  size_t windowLength, const size_t hopSize,
+                               const size_t frameNumber, const size_t channel){
         size_t start = frameNumber*hopSize;
         size_t end = start + windowLength;
 
@@ -15,6 +15,19 @@ namespace rythm_forge::fft{
         d2array frame(boost::extents[end-start][1]);
         for(; start < end; ++start){
             frame[start-hopSize*frameNumber][0] = (*samples)[start][channel];
+        }
+        return frame;
+    }
+
+    static c2array obtainStftSubmatrix(const std::unique_ptr<c3array>& stftMatrix, const size_t numFrame,
+                                       const size_t channel){
+        const size_t frequencyBins = stftMatrix->shape()[1];
+
+        c2array frame(boost::extents[2*frequencyBins][1]);
+
+        for(size_t i = 0; i < frequencyBins; ++i){
+            frame[i][0] = (*stftMatrix)[channel][i][numFrame];
+            frame[frequencyBins+i][0] = conj((*stftMatrix)[channel][frequencyBins-1][numFrame]);
         }
         return frame;
     }
@@ -129,9 +142,9 @@ namespace rythm_forge::fft{
                 std::fill(frameVector.begin(), frameVector.end(), 0.0);
                 std::transform(frameHann.begin(), frameHann.end(), frameVector.begin(),
                                [](auto sample){return sample[0];});
+                std::vector<dcomplex> fftResult = fft(frameVector);
 
                 // assign
-                std::vector<dcomplex> fftResult = fft(frameVector);
                 for(size_t k = 0; k < frequencyBins; ++k){
                     (*stft_matrix)[i][k][j] = fftResult.at(k);
                 }
@@ -140,9 +153,66 @@ namespace rythm_forge::fft{
         return stft_matrix;
     }
 
-//    std::unique_ptr<d2array> istft(const std::unique_ptr<c3array>& stft_matrix, unsigned int nFtt, unsigned int hopSize,
-//                                   unsigned int window_length, bool center){
-//
-//    }
+
+    std::unique_ptr<d2array> istft(const std::unique_ptr<c3array>& stft_matrix, unsigned int nFtt, unsigned int hopSize,
+                                   [[maybe_unused]]unsigned int window_length, [[maybe_unused]]bool center){
+        const size_t numChannels = stft_matrix->shape()[0];
+        const size_t frequencyBins = stft_matrix->shape()[1];
+        const size_t frames = stft_matrix->shape()[2];
+
+
+        size_t outputLength = (frames -1) * hopSize + nFtt;
+
+        std::unique_ptr<d2array> y = std::make_unique<d2array>(
+                (boost::extents[outputLength][numChannels]));
+
+
+        std::vector<double> hannWindow;
+        hannWindow.resize(nFtt);
+        std::generate(hannWindow.begin(), hannWindow.end(), [N=hannWindow.size(), n=0]()mutable {return 1*hann_window(++n, N);});
+
+
+        for(size_t i = 0; i < numChannels; ++i){
+            std::vector<double> hannWindowCoefficients;
+            hannWindowCoefficients.resize(outputLength);
+            for(size_t j = 0; j < frames; ++j){
+                c2array frame = obtainStftSubmatrix(stft_matrix, j, i);
+
+                // istft
+                std::vector<dcomplex> frameVector;
+                frameVector.reserve(2*frequencyBins);
+                frameVector.resize(2*frequencyBins);
+                std::fill(frameVector.begin(), frameVector.end(), 0.0);
+                std::transform(frame.begin(), frame.end(), frameVector.begin(),
+                               [](auto sample){return sample[0];});
+
+                std::vector<dcomplex> istftResult = ifft(frameVector);
+
+                // Hann window
+
+                std::vector<double> istftResultWindow;
+                istftResultWindow.reserve(istftResult.size());
+                istftResultWindow.resize(istftResult.size());
+                std::transform(istftResult.cbegin(), istftResult.cend(), istftResultWindow.begin(),
+                               [N=istftResult.size(), n=0](auto& sample)mutable {return sample.real() * hann_window(++n, N);});
+
+                // assign
+                const size_t start = j*hopSize;
+                for(size_t k = 0; k < nFtt; ++k){
+                    (*y)[start+k][i] = (*y)[start+k][i] + istftResultWindow.at(k);
+                    hannWindowCoefficients[start+k] = hannWindowCoefficients[start+k] + hannWindow[k];
+                }
+            }
+
+            // Normalize
+            for(size_t j = 0; j < outputLength; ++j){
+                if(hannWindowCoefficients.at(j) != 0){
+                    (*y)[j][i] = (*y)[j][i] / hannWindowCoefficients.at(j);
+                }
+            }
+        }
+
+        return y;
+    }
 }
 
