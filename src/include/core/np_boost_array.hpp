@@ -9,8 +9,8 @@ namespace py = pybind11;
  std::unique_ptr<boost::multi_array<double,2>>np2DtoMultiarray(const py::array& npArray);
  py::array_t<double> multiarray2DtoNp(const std::unique_ptr<boost::multi_array<double,2>>& multiArray);
 
-static std::unique_ptr<boost::multi_array<double,3>>np3DtoMultiarray(const py::array& npArray);
+[[maybe_unused]]std::unique_ptr<boost::multi_array<double,3>>np3DtoMultiarray(const py::array& npArray);
 
-static py::array multiarray3DtoNp(const std::unique_ptr<boost::multi_array<double,3>>& multiArray);
+[[maybe_unused]]py::array multiarray3DtoNp(const std::unique_ptr<boost::multi_array<double,3>>& multiArray);
 
 #endif //RYTHMFORGE_NP_BOOST_ARRAY_HPP

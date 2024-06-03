@@ -52,13 +52,13 @@ std::unique_ptr<boost::multi_array<double,3>>np3DtoMultiarray(const py::array& n
     return boost_array;
 }
 
-static py::array multiarray3DtoNp(const std::unique_ptr<boost::multi_array<double,3>>& multiArray){
+py::array multiarray3DtoNp(const std::unique_ptr<boost::multi_array<double,3>>& multiArray){
     py::array_t<double> numpyArray( {multiArray->shape()[0],multiArray->shape()[1],multiArray->shape()[2]});
     auto npArrayData = numpyArray.mutable_unchecked();
     for(size_t i = 0; i < multiArray->shape()[0]; ++i){
         for(size_t j = 0; j < multiArray->shape()[1]; ++j){
             for (size_t k = 0; k < multiArray->shape()[2]; ++k) {
-                npArrayData(i,j,k) = (*multiArray)[i][j][k;
+                npArrayData(i,j,k) = (*multiArray)[i][j][k];
 
             }
         }

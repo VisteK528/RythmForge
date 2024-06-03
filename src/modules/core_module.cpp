@@ -26,7 +26,7 @@ static py::array_t<rythm_forge::dcomplex> assignNumpyArray(const std::unique_ptr
     return numpyArray;
 }
 
-static py::array_t<double> assignNumpyArray(const std::unique_ptr<rythm_forge::d3array>& samples){
+[[maybe_unused]]static py::array_t<double> assignNumpyArray(const std::unique_ptr<rythm_forge::d3array>& samples){
     const size_t numChannels = samples->shape()[0];
     const size_t frequencyBins = samples->shape()[1];
     const size_t frames = samples->shape()[2];
@@ -137,9 +137,9 @@ py::tuple resample_python(py::array_t<double>& inputSample, int sr,int newSr){
     return py::make_tuple(numpyArray,newSr);
 }
 
-py::array_t<double> getMagnitude(py::array_t<rythm_forge::dcomplex> complexMatrix){
-    np3DtoMultiarray()
-}
+//py::array_t<double> getMagnitude(py::array_t<rythm_forge::dcomplex> complexMatrix){
+//    np3DtoMultiarray()
+//}
 
 
 PYBIND11_MODULE(rythm_forge_core_cpp, m) {
@@ -149,5 +149,5 @@ PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.def("fft", &fft_python, "Fast Fourier Transform");
     m.def("ifft", &ifft_python, "Fast Fourier Transform");
     m.def("resample",&resample_python, "Resample");
-    m.def("magnitude",&getMagnitude,"Calculate magnitude of a complex-valued matrix");
+    // m.def("magnitude",&getMagnitude,"Calculate magnitude of a complex-valued matrix");
 }

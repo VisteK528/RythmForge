@@ -18,7 +18,7 @@ int main() {
     rythm_forge::PCMData data = optional_data.value();
     file.close();
 
-    auto a = multiarray2DtoNp(data.getSamples());
+    [[maybe_unused]]auto a = multiarray2DtoNp(data.getSamples());
 //    auto b = np2DtoMultiarray(a);
 
 
