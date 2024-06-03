@@ -3,9 +3,9 @@
 #include <iostream>
 #include "../include/core/fft.hpp"
 #include "../include/load/pcm.hpp"
+#include "../include/core/np_boost_array.hpp"
 
 namespace py = pybind11;
-
 
 static py::array_t<rythm_forge::dcomplex> assignNumpyArray(const std::unique_ptr<rythm_forge::c3array>& samples){
     const size_t numChannels = samples->shape()[0];
@@ -74,8 +74,9 @@ py::array_t<rythm_forge::dcomplex> stft_python(py::array_t<double>& input_sample
             (*result)[i][j] = r(j, i);
         }
     }
-
+//TODO why create PCM data object?
     rythm_forge::PCMData data(std::move(result), 44100);
+//    TODO hardcoding all the parameters? Maybe you can accept them and default them if not given?
     std::unique_ptr<rythm_forge::c3array> stft_matrix = rythm_forge::fft::stft(data.getSamples(), 2048,
                                                                                512, 2048,
                                                                                false);
@@ -107,6 +108,14 @@ py::array_t<double> istft_python(py::array_t<rythm_forge::dcomplex>& input_sampl
 
     py::array_t<rythm_forge::dcomplex> numpyArray = assignNumpyArrayDouble(istftResult, channels);
     return numpyArray;
+}
+
+py::tuple resample_python(py::array_t<double>& inputSample, int sr,int newSr){
+    py::buffer_info buf_info = inputSample.request();
+//    TODO HMMM wont work because data copying in body
+    std::unique_ptr<boost::multi_array<double,2>> samples = np2multiarray<double,2>(inputSample);
+    
+
 }
 
 

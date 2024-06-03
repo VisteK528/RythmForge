@@ -125,7 +125,6 @@ namespace rythm_forge::fft{
 
         for(size_t i = 0; i < numChannels; ++i){
             for(size_t j = 0; j < frames; ++j){
-                std::cout<<j<<"/"<<frames<<std::endl;
                 d2array frame = obtainFrame(samples, windowLength, hopSize, j, i);
                 const size_t frameLength = frame.shape()[0];
 
@@ -214,5 +213,19 @@ namespace rythm_forge::fft{
 
         return y;
     }
-}
 
+    std::unique_ptr<d3array> calculateMagnitude(const std::unique_ptr<c3array> &stft_matrix) {
+        std::unique_ptr<d3array> magnitudeMatrix = std::make_unique<d3array>(
+                boost::extents[stft_matrix->shape()[0]][stft_matrix->shape()[1]][stft_matrix->shape()[2]]);
+        for (uint64_t i = 0; i < stft_matrix->shape()[0]; ++i) {
+            for (uint64_t j = 0; j < stft_matrix->shape()[1]; ++j) {
+                for (uint64_t k = 0; k < stft_matrix->shape()[2]; ++k) {
+                    magnitudeMatrix->operator[](i)[j][k] = std::abs(stft_matrix->operator[](i)[j][k]);
+                }
+            }
+
+        }
+
+        return magnitudeMatrix;
+    }
+}

@@ -2,6 +2,7 @@
 #include "include/load/load_wave.hpp"
 #include "include/load/pcm.hpp"
 #include "include/core/fft.hpp"
+#include "include/core/beat.hpp"
 
 int main() {
     std::ifstream file;
@@ -16,14 +17,8 @@ int main() {
 
     rythm_forge::PCMData data = optional_data.value();
     file.close();
+    rythm_forge::beat::tempo(data);
 
-    std::unique_ptr<rythm_forge::c3array> stft_matrix = rythm_forge::fft::stft(data.getSamples(), 2048,
-                                                                               512, 2048,
-                                                                               false);
-
-    std::unique_ptr<rythm_forge::d2array> y_hat = rythm_forge::fft::istft(stft_matrix, 2048,
-                                                                               512, 2048,
-                                                                               false);
 
     return 0;
 }
