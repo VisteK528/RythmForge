@@ -25,66 +25,40 @@ namespace rythm_forge::beat {
         return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0);
     }
 
-    std::unique_ptr<d3array> apply_mel_filter_bank(std::unique_ptr<d3array> &magnitudeMatrix, std::unique_ptr<d2array> &mel_filter_bank) {
-        uint64_t n_mels = mel_filter_bank->shape()[0];
-        uint64_t n_frames = magnitudeMatrix->shape()[0];
-        std::unique_ptr<d3array > mel_spectogram = std::make_unique<d3array>(boost::extents[magnitudeMatrix->shape()[0]][n_mels][n_frames]);
-        for (uint64_t i = 0; i < magnitudeMatrix->shape()[0]; ++i) {
-            for (uint64_t j = 0; j < n_mels; ++j) {
-                for (uint64_t k = 0; k < n_frames; ++k) {
-                    for (uint64_t l = 0; l < magnitudeMatrix->shape()[0]; ++l) {
-                        mel_spectogram->operator[](i)[j][k] += mel_filter_bank->operator[](j)[l] * magnitudeMatrix->operator[](i)[l][k];
-                    }
-                }
+
+    std::unique_ptr<d2array> create_mel_filter_bank(uint32_t sampleRate, uint32_t nFft, uint32_t nMels) {
+
+        std::unique_ptr<d2array> melFilterBank = std::make_unique<d2array>(boost::extents[nMels][nFft / 2 + 1]);
+        double fMin = 0.0;
+        double fMax = sampleRate / 2.0;
+
+        double melMin = hz_to_mel(fMin);
+        double melMax = hz_to_mel(fMax);
+
+        std::vector<double> melPoints(nMels + 2);
+        for (uint32_t i = 0; i < nMels + 2; ++i) {
+            melPoints[i] = melMin + (melMax - melMin) / (nMels + 1) * i;
+        }
+
+        std::vector<double> hzPoints(nMels + 2);
+        for (uint32_t i = 0; i < nMels + 2; ++i) {
+            hzPoints[i] = mel_to_hz(melPoints[i]);
+        }
+
+        std::vector<int> binPoints(nMels + 2);
+        for (uint32_t i = 0; i < nMels + 2; ++i) {
+            binPoints[i] = static_cast<int>(std::floor((nFft + 1) * hzPoints[i] / sampleRate));
+        }
+        for (uint32_t i = 1; i <= nMels; ++i) {
+            for (int32_t j = binPoints[i - 1]; j < binPoints[i]; ++j) {
+                (*melFilterBank)[i - 1][j] =
+                        (j - binPoints[i - 1]) / static_cast<double>(binPoints[i] - binPoints[i - 1]);
+            }
+            for (int32_t j = binPoints[i]; j < binPoints[i + 1]; ++j) {
+                (*melFilterBank)[i - 1][j] =
+                        (binPoints[i + 1] - j) / static_cast<double>(binPoints[i + 1] - binPoints[i]);
             }
         }
-        return mel_spectogram;
-    }
-
-    std::unique_ptr<d2array>create_mel_filter_bank(rythm_forge::PCMData &pcmData, int n_fft, int n_mels) {
-        int n_freq = n_fft/2+1;
-        double min_mel = hz_to_mel(0);
-        double max_mel = hz_to_mel(pcmData.getSampleRate()/2);
-
-        std::vector<double> mel_points(n_mels+2);
-        std::vector<int> bin(n_mels+2);
-        std::unique_ptr<d2array> mel_filter_bank = std::make_unique<d2array>(boost::extents[n_mels][n_freq]);
-
-        for (int i = 0; i<n_mels+2;++i){
-            mel_points[i] = mel_to_hz(min_mel+(max_mel-min_mel)*i/(n_mels+2));
-            bin[i] = std::floor((n_fft+1)*mel_points[i]/pcmData.getSampleRate());
-
-        }
-        for (int i = 1; i < n_mels + 1; ++i) {
-            for (int j = bin[i - 1]; j < bin[i]; ++j) {
-            mel_filter_bank->operator[](i-1)[j]= (j - bin[i - 1]) / (double)(bin[i] - bin[i - 1]);
-
-            }
-            for (int j = bin[i]; j < bin[i + 1]; ++j) {
-                mel_filter_bank->operator[](i - 1)[j] = 1.0 - ((j - bin[i]) / (double)(bin[i + 1] - bin[i]));
-
-            }
-        }
-        return mel_filter_bank;
-    }
-
-    void tempo(const rythm_forge::PCMData &pcm) {
-//    int tmean = 110;
-//    double tsd = 0.9;
-//        unsigned int sr = pcm.getSampleRate();
-        std::vector<double> onsetEnv{};
-        unsigned int sro = 8000;
-        int swin = 1024;
-        int shop = 256;
-        int n_mel = 40;
-//    double oesr = sro/shop;
-//    double acmax = round(4*oesr);
-
-        PCMData newPCM = rythm_forge::PCMData::resample(pcm, sro);
-        std::unique_ptr<c3array> spectogram = rythm_forge::fft::stft(newPCM.getSamples(), 256, swin, shop, true);
-        std::unique_ptr<d3array> magnitude = fft::calculateMagnitude(spectogram);
-        std::unique_ptr<d2array> mel_filter_bank = create_mel_filter_bank(newPCM,256,n_mel);
-        auto r = apply_mel_filter_bank(magnitude,mel_filter_bank);
-
+        return melFilterBank;
     }
 }

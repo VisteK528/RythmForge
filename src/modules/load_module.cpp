@@ -40,7 +40,7 @@ py::tuple readPCMData(py::object& raw_data) {
     return py::make_tuple(numpyArray, sampleRate);
 }
 
-py::array_t<double> converToMono(py::array_t<double>& input_samples){
+py::array_t<double> convertToMono(py::array_t<double>& input_samples){
     auto r = input_samples.unchecked<2>();
     size_t channels = r.shape(0);
     size_t samples_len = r.shape(1);
@@ -62,10 +62,9 @@ py::array_t<double> converToMono(py::array_t<double>& input_samples){
 }
 
 
-
 // Define Python module
 PYBIND11_MODULE(rythm_forge_load_cpp, m) {
     m.doc() = "RythmForge audio files loading module";
     m.def("load_wav_file", &readPCMData, "Reads samples from .wav file and returns them with sample rate");
-    m.def("to_mono", &converToMono);
+    m.def("to_mono", &convertToMono);
 }

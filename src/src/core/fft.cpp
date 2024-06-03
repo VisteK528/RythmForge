@@ -220,7 +220,7 @@ namespace rythm_forge::fft{
         for (uint64_t i = 0; i < stft_matrix->shape()[0]; ++i) {
             for (uint64_t j = 0; j < stft_matrix->shape()[1]; ++j) {
                 for (uint64_t k = 0; k < stft_matrix->shape()[2]; ++k) {
-                    magnitudeMatrix->operator[](i)[j][k] = std::abs(stft_matrix->operator[](i)[j][k]);
+                    (*magnitudeMatrix)[i][j][k] = std::abs(stft_matrix->operator[](i)[j][k]);
                 }
             }
 

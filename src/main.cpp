@@ -3,7 +3,7 @@
 #include "include/load/pcm.hpp"
 #include "include/core/fft.hpp"
 #include "include/core/beat.hpp"
-
+#include "include/core/np_boost_array.hpp"
 int main() {
     std::ifstream file;
 
@@ -17,7 +17,9 @@ int main() {
 
     rythm_forge::PCMData data = optional_data.value();
     file.close();
-    rythm_forge::beat::tempo(data);
+
+    auto a = multiarray2DtoNp(data.getSamples());
+//    auto b = np2DtoMultiarray(a);
 
 
     return 0;
