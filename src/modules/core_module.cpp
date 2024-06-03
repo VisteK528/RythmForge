@@ -74,9 +74,8 @@ py::array_t<rythm_forge::dcomplex> stft_python(py::array_t<double>& input_sample
             (*result)[i][j] = r(j, i);
         }
     }
-//TODO why create PCM data object?
+
     rythm_forge::PCMData data(std::move(result), 44100);
-//    TODO hardcoding all the parameters? Maybe you can accept them and default them if not given?
     std::unique_ptr<rythm_forge::c3array> stft_matrix = rythm_forge::fft::stft(data.getSamples(), 2048,
                                                                                512, 2048,
                                                                                false);
@@ -112,10 +111,12 @@ py::array_t<double> istft_python(py::array_t<rythm_forge::dcomplex>& input_sampl
 
 py::tuple resample_python(py::array_t<double>& inputSample, int sr,int newSr){
     py::buffer_info buf_info = inputSample.request();
-//    TODO HMMM wont work because data copying in body
-    std::unique_ptr<boost::multi_array<double,2>> samples = np2multiarray<double,2>(inputSample);
-    
+    auto dataArray = np2DtoMultiarray(inputSample);
+    rythm_forge::PCMData data(std::move(dataArray), sr);
+    auto newPCM = rythm_forge::PCMData::resample(data,newSr);
 
+    py::array_t<double> numpyArray = multiarray2DtoNp(newPCM.getSamples());
+    return py::make_tuple(numpyArray,newSr);
 }
 
 
@@ -125,4 +126,5 @@ PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.def("istft", &istft_python, "Inverse Short Time Fourier Transform");
     m.def("fft", &fft_python, "Fast Fourier Transform");
     m.def("ifft", &ifft_python, "Fast Fourier Transform");
+    m.def("resample",&resample_python, "Resample");
 }
