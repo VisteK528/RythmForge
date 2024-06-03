@@ -4,13 +4,13 @@
 namespace rythm_forge{
     PCMData::PCMData(std::unique_ptr<d2array > samples, unsigned int sampleRate): samples_(std::move(samples)), sampleRate_(sampleRate) {
         if(this->samples_){
-            this->numChannels_ = samples_->shape()[0];
+            this->numChannels_ = samples_->shape()[1];
         }
     }
     PCMData::PCMData(const PCMData& other) : sampleRate_(other.sampleRate_) {
         if (other.samples_) {
             this->samples_ = std::make_unique<d2array>(*other.samples_);
-            this->numChannels_ = samples_->shape()[0];
+            this->numChannels_ = samples_->shape()[1];
         }
         else {
             this->samples_ = nullptr;
@@ -39,5 +39,27 @@ namespace rythm_forge{
             }
             this->samples_ = std::move(array_mono);
         }
+    }
+
+    PCMData PCMData::resample(const PCMData &other, unsigned int target_sr) {
+
+        unsigned int sr = other.getSampleRate();
+        uint16_t numChannels = other.numChannels_;
+        double ratio =(double)target_sr/sr;
+
+        std::unique_ptr<d2array> newSample = std::make_unique<d2array>(boost::extents[(int64_t)(ratio*other.getSamples()->shape()[0])][numChannels]);
+
+        for(int64_t i =0; i<(int64_t)(other.getSamples()->shape()[0]*ratio);++i){
+            double index = (double) i/ratio;
+            auto index_floor = (int64_t) floor(index);
+            double frac = index-index_floor;
+
+            for(int j =0;j<numChannels;++j){
+                double sample = (1-frac)*other.getSamples()->operator[](index_floor)[j]+frac*other.getSamples()->operator[](index_floor+1)[j];
+                newSample->operator[](i)[j] = sample;
+            }
+
+        }
+        return {std::move(newSample),target_sr};
     }
 }

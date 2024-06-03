@@ -14,6 +14,8 @@ namespace rythm_forge::fft{
     std::unique_ptr<c3array> stft(const std::unique_ptr<d2array>& samples, unsigned int nFft, unsigned int hopSize, unsigned int windowLength, bool center);
     std::unique_ptr<d2array> istft(const std::unique_ptr<c3array>& stft_matrix, unsigned int nFtt, unsigned int hopSize, unsigned int window_length, bool center);
 
+    std::unique_ptr<d3array> calculateMagnitude(const std::unique_ptr<c3array> &stft_matrix);
+
     class InvalidNFFTSize;
 }
 

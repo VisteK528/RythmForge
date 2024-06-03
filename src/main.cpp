@@ -2,7 +2,8 @@
 #include "include/load/load_wave.hpp"
 #include "include/load/pcm.hpp"
 #include "include/core/fft.hpp"
-
+#include "include/core/beat.hpp"
+#include "include/core/np_boost_array.hpp"
 int main() {
     std::ifstream file;
 
@@ -17,13 +18,9 @@ int main() {
     rythm_forge::PCMData data = optional_data.value();
     file.close();
 
-    std::unique_ptr<rythm_forge::c3array> stft_matrix = rythm_forge::fft::stft(data.getSamples(), 2048,
-                                                                               512, 2048,
-                                                                               false);
+    auto a = multiarray2DtoNp(data.getSamples());
+//    auto b = np2DtoMultiarray(a);
 
-    std::unique_ptr<rythm_forge::d2array> y_hat = rythm_forge::fft::istft(stft_matrix, 2048,
-                                                                               512, 2048,
-                                                                               false);
 
     return 0;
 }

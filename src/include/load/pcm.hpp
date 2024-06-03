@@ -16,7 +16,7 @@ namespace rythm_forge{
     public:
         PCMData(std::unique_ptr<d2array> samples, unsigned int sampleRate);
         PCMData(const PCMData& other);
-
+        static PCMData resample(const PCMData& other, unsigned int target_sr);
         double getDurationTime() const;
         const std::unique_ptr<d2array>& getSamples() const;
         unsigned int getSampleRate() const;
