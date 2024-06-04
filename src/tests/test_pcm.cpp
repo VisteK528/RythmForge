@@ -2,7 +2,7 @@
 #include "include/load/pcm.hpp"
 
 TEST_CASE("Test duration estimation"){
-    std::unique_ptr<mdarray> samples = std::make_unique<mdarray>(boost::extents[10][2]);
+    std::unique_ptr<rythm_forge::d2array> samples = std::make_unique<rythm_forge::d2array>(boost::extents[10][2]);
     for(uint8_t i = 0; i < 10; ++i){
         (*samples)[i][0] = 5. + 10. * i;
         (*samples)[i][0] = 100. - 10. * i;
@@ -10,7 +10,7 @@ TEST_CASE("Test duration estimation"){
     REQUIRE(samples->size() == 10);
 
     unsigned int sampleRate = 44100;
-    PCMData pcmData(std::move(samples), sampleRate);
+    rythm_forge::PCMData pcmData(std::move(samples), sampleRate);
 
     REQUIRE(pcmData.getSampleRate() == 44100);
 
@@ -20,7 +20,7 @@ TEST_CASE("Test duration estimation"){
 }
 
 TEST_CASE("Test sample averaging across channels"){
-    std::unique_ptr<mdarray> samples = std::make_unique<mdarray>(boost::extents[5][2]);
+    std::unique_ptr<rythm_forge::d2array> samples = std::make_unique<rythm_forge::d2array>(boost::extents[5][2]);
     double data[] = {
             10, 20, 15, 25, 20, 20, 10, 10, 2, 8
     };
@@ -28,7 +28,7 @@ TEST_CASE("Test sample averaging across channels"){
     REQUIRE(samples->size() == 5);
 
     unsigned int sampleRate = 44100;
-    PCMData pcmData(std::move(samples), sampleRate);
+    rythm_forge::PCMData pcmData(std::move(samples), sampleRate);
     pcmData.toMono();
 
     // Check sample array dimensions after averaging

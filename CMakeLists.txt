@@ -6,21 +6,23 @@ if(POLICY CMP0148)
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(PYBIND11_CPP_STANDARD -std=c++20)
 set(PYBIND11_PYTHON_VERSION 3.10)
 
 if(MSVC)
-    message("MSVC")
-else()  # GCC and Clang
-    message("GCC / Clang")
+    message("Compiling with MSVC")
+else()
+    message("Compiling with GCC/Clang")
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-
-# Find PyBind11
 find_package(pybind11 REQUIRED)
+
 set(PYBIND11_FINDPYTHON ON)
+include_directories(${Python3_INCLUDE_DIRS})
+include_directories(${pybind11_INCLUDE_DIRS})
 
 
 find_package(Boost REQUIRED)
@@ -36,3 +38,10 @@ add_subdirectory(src)
 
 include(CTest)
 enable_testing()
+
+# Verbose Makefile for better debugging
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+message(STATUS "Python3 include dirs: ${Python3_INCLUDE_DIRS}")
+message(STATUS "Python3 libraries: ${Python3_LIBRARIES}")
+message(STATUS "pybind11 include dirs: ${pybind11_INCLUDE_DIRS}")
