@@ -137,9 +137,12 @@ py::tuple resample_python(py::array_t<double>& inputSample, int sr,int newSr){
     return py::make_tuple(numpyArray,newSr);
 }
 
-//py::array_t<double> getMagnitude(py::array_t<rythm_forge::dcomplex> complexMatrix){
-//    np3DtoMultiarray()
-//}
+py::array_t<double> calculate_magnitude_python(py::array_t<rythm_forge::dcomplex>& complexMatrix){
+    auto matrix = np2multiarray2d<rythm_forge::dcomplex,3>(complexMatrix);
+    auto magnitude = rythm_forge::fft::calculateMagnitude(matrix);
+    return multiarray2np<double,3>(magnitude);
+
+}
 
 
 PYBIND11_MODULE(rythm_forge_core_cpp, m) {
@@ -149,5 +152,5 @@ PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.def("fft", &fft_python, "Fast Fourier Transform");
     m.def("ifft", &ifft_python, "Fast Fourier Transform");
     m.def("resample",&resample_python, "Resample");
-    // m.def("magnitude",&getMagnitude,"Calculate magnitude of a complex-valued matrix");
+    m.def("magnitude",&calculate_magnitude_python,"Calculate magnitude of a complex-valued matrix");
 }

@@ -7,6 +7,7 @@
 
 namespace rythm_forge::audio::load{
     std::optional<WaveHeader> WaveLoader::getFileProperties(std::ifstream &file_handle) {
+
         WaveHeader header;
 
         header.header = readBytes(file_handle, waveFieldsMap["chunkID"]);
@@ -40,6 +41,7 @@ namespace rythm_forge::audio::load{
             }
 
             if(header.data_start >= header.chunkSize){
+                std::cout<<header.data_start<<" i " <<header.chunkSize;
                 return {};
             }
 
@@ -54,8 +56,10 @@ namespace rythm_forge::audio::load{
     }
 
     std::optional<PCMData> WaveLoader::loadPCMData(std::ifstream &file_handle) {
+
         auto optional_header = getFileProperties(file_handle);
         if(!optional_header.has_value()){
+            std::cout<<"Here we go again";
             return {};
         }
         WaveHeader header = optional_header.value();

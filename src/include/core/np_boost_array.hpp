@@ -22,17 +22,17 @@ std::unique_ptr<boost::multi_array<T, N>> np2multiarray2d(const py::array &npArr
     //    if (bufferInfo.ndim != 2) {
     //        throw std::runtime_error("Input dimensions do not match Boost MultiArray dimensions");
     //    }
-    // Get buffer info from the py::array
+
     py::buffer_info bufInfo = npArray.request();
 
-    // Create a boost::multi_array with the same shape
+
     std::vector<std::size_t> shape(bufInfo.shape.begin(), bufInfo.shape.end());
     boost::array<typename boost::multi_array<T, N>::index, N> extents;
     std::copy(shape.begin(), shape.end(), extents.begin());
 
     auto boostArray = std::make_unique<boost::multi_array<T, N>>(extents);
 
-    // Copy data from py::array to boost::multi_array
+
     T *pyData = static_cast<T *>(bufInfo.ptr);
     std::copy(pyData, pyData + bufInfo.size, boostArray->origin());
 
@@ -40,17 +40,17 @@ std::unique_ptr<boost::multi_array<T, N>> np2multiarray2d(const py::array &npArr
 }
 
 template<typename T, std::size_t N>
-py::array multiarray2np(boost::multi_array<T, N> &boostArray) {
+py::array multiarray2np(std::unique_ptr<boost::multi_array<T, N>> &boostArray) {
 
 
-    std::vector<size_t> shape(boostArray.shape(), boostArray.shape() + N);
+    std::vector<size_t> shape(boostArray->shape(), boostArray->shape() + N);
     std::vector<size_t> strides(N);
     for (std::size_t i = 0; i < N; ++i) {
-        strides[i] = boostArray.strides()[i] * sizeof(T);
+        strides[i] = boostArray->strides()[i] * sizeof(T);
     }
 
 
-    std::vector<T> data(boostArray.data(), boostArray.data() + boostArray.num_elements());
+    std::vector<T> data(boostArray->data(), boostArray->data() + boostArray->num_elements());
 
     return py::array(py::buffer_info(
             data.data(),
