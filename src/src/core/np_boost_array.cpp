@@ -12,8 +12,8 @@ std::unique_ptr<boost::multi_array<double, 2>> np2DtoMultiarray(const py::array 
 
     auto boost_array = std::make_unique<boost::multi_array<double, 2>>(boost::extents[buf_info.shape[0]][buf_info.shape[1]]);
 
-    for (ssize_t i = 0; i < buf_info.shape[0]; ++i) {
-        for (ssize_t j = 0; j < buf_info.shape[1]; ++j) {
+    for (long i = 0; i < buf_info.shape[0]; ++i) {
+        for (long j = 0; j < buf_info.shape[1]; ++j) {
             (*boost_array)[i][j] = r(i, j);
         }
     }
