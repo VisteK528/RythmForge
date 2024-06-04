@@ -1,4 +1,5 @@
 #include "../../include/core/np_boost_array.hpp"
+#include <complex>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 
@@ -62,4 +63,15 @@ py::array multiarray3DtoNp(const std::unique_ptr<boost::multi_array<double, 3>> 
         }
     }
     return numpyArray;
+}
+
+void test_function(const py::array &npArray) {
+    auto a = np2multiarray2d<int, 2>(npArray);
+    auto b = np2multiarray2d<int, 3>(npArray);
+    auto c = np2multiarray2d<std::complex<double>, 3>(npArray);
+    auto d = np2multiarray2d<double, 3>(npArray);
+}
+
+void test_funcion2(boost::multi_array<double,2> array){
+    auto r = multiarray2np<double,2>(array);
 }
