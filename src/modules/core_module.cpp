@@ -79,7 +79,7 @@ py::array_t<rythm_forge::dcomplex> ifft_python(py::array_t<rythm_forge::dcomplex
     return numpyArray;
 }
 
-py::array_t<rythm_forge::dcomplex> stft_python(py::array_t<double> &input_samples) {
+py::array_t<rythm_forge::dcomplex> stft_python(py::array_t<double> &input_samples, const int nFft, const int hopSize, const int windowLength, bool center) {
     auto r = input_samples.unchecked<2>();
     size_t channels = r.shape(0);
     size_t samples_len = r.shape(1);
@@ -92,17 +92,14 @@ py::array_t<rythm_forge::dcomplex> stft_python(py::array_t<double> &input_sample
         }
     }
 
-    rythm_forge::PCMData data(std::move(result), 44100);
-    std::unique_ptr<rythm_forge::c3array> stft_matrix = rythm_forge::fft::stft(data.getSamples(), 2048,
-                                                                               512, 2048,
-                                                                               false);
-
-
+    std::unique_ptr<rythm_forge::c3array> stft_matrix = rythm_forge::fft::stft(result, nFft,
+                                                                               hopSize, windowLength,
+                                                                               center);
     py::array_t<rythm_forge::dcomplex> numpyArray = assignNumpyArray(stft_matrix);
     return numpyArray;
 }
 
-py::array_t<double> istft_python(py::array_t<rythm_forge::dcomplex> &input_samples) {
+py::array_t<double> istft_python(py::array_t<rythm_forge::dcomplex> &input_samples, const int nFft, const int hopSize, const int windowLength, bool center) {
     auto r = input_samples.unchecked<3>();
     size_t channels = r.shape(0);
     size_t frequencyBins = r.shape(1);
@@ -117,12 +114,11 @@ py::array_t<double> istft_python(py::array_t<rythm_forge::dcomplex> &input_sampl
         }
     }
 
+    std::unique_ptr<rythm_forge::d2array> istftResult = rythm_forge::fft::istft(result, nFft,
+                                                                                hopSize, windowLength,
+                                                                                center);
 
-    std::unique_ptr<rythm_forge::d2array> istftResult = rythm_forge::fft::istft(result, 2048,
-                                                                                512, 2048,
-                                                                                false);
-
-    py::array_t<rythm_forge::dcomplex> numpyArray = assignNumpyArrayDouble(istftResult, channels);
+    py::array_t<double> numpyArray = assignNumpyArrayDouble(istftResult, channels);
     return numpyArray;
 }
 
