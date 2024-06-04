@@ -8,3 +8,4 @@ rythm_forge/__pycache__/
 rythm_forge_python/.idea/
 rythm_forge_python/test.ipynb
 tests/__pycache__/
+docs/_build/
