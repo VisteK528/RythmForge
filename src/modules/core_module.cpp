@@ -141,7 +141,7 @@ double mel_to_hz(double mel_value){
         return rythm_forge::feature::melToHz(mel_value);
 }
 
-py::array_t<double> calculate_magnitude_python(py::array_t<rythm_forge::dcomplex>& complexMatrix){
+py::array_t<double> calculate_magnitude_python(const py::array_t<rythm_forge::dcomplex>& complexMatrix){
 
     auto matrix = np3DtoMultiarrayComplex(complexMatrix);
     auto magnitude = rythm_forge::fft::calculateMagnitude(matrix);
@@ -152,6 +152,17 @@ py::array_t<double> calculate_magnitude_python(py::array_t<rythm_forge::dcomplex
 py::array_t<double> calculate_mel_filter_bank_python(uint32_t sampleRate,uint32_t nFft,uint32_t nMels){
     auto bank = rythm_forge::feature::create_mel_filter_bank(sampleRate,nFft,nMels);
     return multiarray2DtoNp(bank);
+}
+
+py::array_t<int> find_peaks_python(const py::array_t<float>& onset_envelope){
+    py::buffer_info buf = onset_envelope.request();
+    std::vector<double> envelope_vector(reinterpret_cast<double*>(buf.ptr),reinterpret_cast<double*>(buf.ptr) + buf.size);
+    std::vector<int> peaks_samples = rythm_forge::feature::find_pick(envelope_vector);
+    py::array_t<int> output_array(peaks_samples.size());
+    auto output_buf = output_array.request();
+    int* output_ptr = static_cast<int*>(output_buf.ptr);
+    std::copy(peaks_samples.begin(), peaks_samples.end(), output_ptr);
+    return output_array;
 }
 PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.doc() = "RythmForge core module";
@@ -164,5 +175,5 @@ PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.def("hz_to_mel",py::vectorize(hz_to_mel),"Convert from hz to mel");
     m.def("mel_to_hz",py::vectorize(mel_to_hz),"Convert from mel scale to hz");
     m.def("mel_filter_bank",&calculate_mel_filter_bank_python,"Get mel filter bank");
-
+    m.def("find_peaks",&find_peaks_python,"Finds peaks from 1D array");
 }

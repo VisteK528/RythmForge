@@ -1,6 +1,7 @@
 import numpy as np
 from ..exceptions.exceptions import RythmForgeValueError
 from .._lib import rythm_forge_core_cpp as core_backend
+from .fft_functions import stft
 
 
 def resample(y: np.ndarray, sr: int, new_sr=8000) -> tuple[np.ndarray, int]:
@@ -16,8 +17,8 @@ def resample(y: np.ndarray, sr: int, new_sr=8000) -> tuple[np.ndarray, int]:
         y_hat: mp.ndarray, y resampled from sr to new_sr
         new_sr:int sampling rate used in resampling
     """
-
-    resampled_y = core_backend.resample(y, sr, new_sr)
+    print(y.shape)
+    resampled_y,new_sr = core_backend.resample(y, sr, new_sr)
     return resampled_y, new_sr
 
 
@@ -36,9 +37,8 @@ def mel_filter_bank(sr: int, n_fft: int, n_mel: int) -> np.ndarray:
 
     :return: M np.ndarray [shape=(n_mels, 1 + n_fft/2)]
         Mel transform matrix
-
-
     """
+
     mel_filter = core_backend.mel_filter_bank(sr, n_fft, n_mel)
     return mel_filter.T
 
@@ -66,11 +66,87 @@ def magnitude(complex_matrix: np.ndarray):
         Array with complex values, most often from stft
     :return: np.ndarray
     """
-    return core_backend.magntude(complex_matrix)
+    return np.abs(complex_matrix)
+    # return core_backend.magnitude(complex_matrix)
+
+
+def find_peaks(y: np.ndarray):
+    """
+    Iterates through 1D array and returns indices of peak samples, meaning sample before and after are smaller than checked.
+    :param y: 1D array, like onset_strength envelope, which elements will be compared
+    :return: 1D np.nadrray, with elements being indices of beats that are peaks in the series
+    """
+    print(y)
+    if y.ndim != 2:
+        raise ValueError(f"Given vector y must be 1D, but {y.ndim}  was given")
+    return core_backend.find_peaks(y)
+
+
+def onset_strength(y: np.ndarray, sr: int):
+    """
+
+    :param y:
+    :param sr:
+    :return:
+    """
+    y_resampled, sr = resample(y, sr, 8000)
+    stft_matrix = stft(y_resampled, 2048, 512)
+    hz_spectogram = magnitude(stft_matrix)
+    mel_filter = mel_filter_bank(sr, 2048, 40)
+    mel_filter_expanded = mel_filter[np.newaxis,:,:]
+    mel_spectogram = np.abs(np.dot(mel_filter_expanded, hz_spectogram)[0])
+    db_spectrum = power_to_dB(mel_spectogram)
+    # ref = db_spectrum
+
+    onset_env = np.diff(db_spectrum,axis=1)
+    # onset_env = np.max(0.0,onset_env)
+    onset_env[onset_env<0] = 0
+    return np.sum(onset_env, axis=0)
+
+
+def tempo_estimation(y: np.ndarray, sr: int):
+    envelope = onset_strength(y, sr)
+    peaks = find_peaks(envelope)
+    peak_intervals = np.diff(peaks) / sr
+    return 60 / np.mean(peak_intervals)
+
+
+def beat_estimation(y: np.ndarray, sr: int):
+    tempo = tempo_estimation(y, sr)
+    beat_interval = 60 / tempo
+    beat_interval_samples = int(beat_interval / 8000)
+    peaks = find_peaks(y)
+    beat_location = [p * beat_interval_samples for p in peaks]
+    return beat_location
+
+
+def amplitude_to_dB(A, ref=1.0, amin=1e-10, top_db=80.0):
+    """
+    Convert an amplitude spectrogram to decibel (dB) units.
+
+    :param A: np.ndarray
+        Input amplitude spectrogram.
+    :param ref: float or callable
+        Reference value. If scalar, amplitude is scaled relative to `ref`. If callable, the reference value is computed as `ref(A)`.
+    :param amin: float
+        Minimum threshold for `A` and `ref`.
+    :param top_db: float
+        Threshold the output at `top_db` below the peak.
+    :return: np.ndarray
+        The dB-scaled spectrogram.
+    """
+    A = np.asarray(A)
+    if callable(ref):
+        ref_value = ref(A)
+    else:
+        ref_value = ref
+
+    log_spec = 20.0 * np.log10(np.maximum(amin, A) / np.maximum(amin, ref_value))
+    log_spec = np.maximum(log_spec, log_spec.max() - top_db)
 
 
 def melspectrogram(
-    stft_matrix: np.ndarray, n_fft=2048, sr=44100, n_mels=128
+        stft_matrix: np.ndarray, n_fft=2048, sr=44100, n_mels=128
 ) -> np.ndarray:
     """
     Convert an STFT matrix to a mel spectrogram.
@@ -100,9 +176,28 @@ def melspectrogram(
     return np.einsum("...ft,mf->...mt", stft_matrix, mel_filter, optimize=True)
 
 
-def beat_estimation():
-    pass
+def power_to_dB(S, ref=1.0, amin=1e-10, top_db=80.0):
+    """
+    Convert a power spectrogram to decibel (dB) units.
 
+    :param S: np.ndarray
+        Input power spectrogram.
+    :param ref: float or callable
+        Reference value. If scalar, amplitude is scaled relative to `ref`. If callable, the reference value is computed as `ref(S)`.
+    :param amin: float
+        Minimum threshold for `S` and `ref`.
+    :param top_db: float
+        Threshold the output at `top_db` below the peak.
+    :return: np.ndarray
+        The dB-scaled spectrogram.
+    """
+    S = np.asarray(S)
+    if callable(ref):
+        ref_value = ref(S)
+    else:
+        ref_value = ref
 
-def tempo_estimation():
-    pass
+    log_spec = 10.0 * np.log10(np.maximum(amin, S) / np.maximum(amin, ref_value))
+    log_spec = np.maximum(log_spec, log_spec.max() - top_db)
+
+    return log_spec

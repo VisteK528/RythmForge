@@ -14,5 +14,6 @@ namespace rythm_forge::feature {
     }
 
     std::unique_ptr<d2array> create_mel_filter_bank(uint32_t sampleRate, uint32_t nFft, uint32_t nMels);
+    std::vector<int> find_pick(const std::vector<double>& onset_envelope);
 }// namespace rythm_forge::feature
 #endif//RYTHMFORGE_FEATURE_H

@@ -6,7 +6,7 @@ add_subdirectory(tests)
 FILE(GLOB_RECURSE SRC_LOAD "src/load/*.cpp")
 FILE(GLOB_RECURSE SRC_CORE "src/core/*.cpp")
 
-# add_executable(rythm_forge_cpp_exe main.cpp ${SRC_CORE} ${SRC_LOAD})
+#add_executable(rythm_forge_cpp_exe main.cpp ${SRC_CORE} ${SRC_LOAD})
 
 # Load module
 ADD_LIBRARY(RythmForgeLoadCpp ${SRC_LOAD})

@@ -64,4 +64,14 @@ namespace rythm_forge::feature {
         }
         return melFilterBank;
     }
+
+    std::vector<int> find_pick(const std::vector<double>& onset_envelope){
+        std::vector<int> peaks;
+        for (size_t i = 1; i < onset_envelope.size() - 1; ++i) {
+            if (onset_envelope[i] > onset_envelope[i - 1] && onset_envelope[i] > onset_envelope[i + 1]) {
+                peaks.push_back((int)i);
+            }
+        }
+        return peaks;
+    }
 }// namespace rythm_forge::feature
