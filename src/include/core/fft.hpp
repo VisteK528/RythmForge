@@ -5,6 +5,7 @@
 #include <complex>
 #include <exception>
 #include <vector>
+
 #include <iterator>
 #include <algorithm>
 
@@ -15,6 +16,7 @@ namespace rythm_forge::fft {
 
     std::unique_ptr<c3array> stft(const std::unique_ptr<d2array> &samples, unsigned int nFft, unsigned int hopSize, unsigned int windowLength, bool center);
     std::unique_ptr<d2array> istft(const std::unique_ptr<c3array> &stft_matrix, unsigned int nFtt, unsigned int hopSize, unsigned int window_length, bool center);
+
 
     template<size_t N>
     std::unique_ptr<boost::multi_array<double, N>> calculateMagnitude(const std::unique_ptr<boost::multi_array<std::complex<double>, N>> &complexMatrix) {
