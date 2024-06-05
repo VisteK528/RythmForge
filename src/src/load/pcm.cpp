@@ -1,5 +1,8 @@
-#include <numeric>
 #include "../../include/load/pcm.hpp"
+#include <iostream>
+#include <numeric>
+
+
 
 namespace rythm_forge{
     PCMData::PCMData(std::unique_ptr<d2array > samples, unsigned int sampleRate): samples_(std::move(samples)), sampleRate_(sampleRate) {
@@ -47,8 +50,12 @@ namespace rythm_forge{
         uint16_t numChannels = other.numChannels_;
         double ratio =(double)target_sr/sr;
 
-        std::unique_ptr<d2array> newSample = std::make_unique<d2array>(boost::extents[(int64_t)(ratio*other.getSamples()->shape()[0])][numChannels]);
-
+        int32_t newSampleCount = (ratio*other.getSamples()->shape()[0]);
+        PRINT_VALUE("Wymiary arraya");
+        PRINT_VALUE(numChannels);
+        PRINT_VALUE(newSampleCount);
+        std::unique_ptr<d2array> newSample = std::make_unique<d2array>(boost::extents[newSampleCount][numChannels]);
+        PRINT_VALUE("Przeszło");
         for(int64_t i =0; i<(int64_t)(other.getSamples()->shape()[0]*ratio);++i){
             double index = (double) i/ratio;
             auto index_floor = (int64_t) floor(index);
@@ -60,6 +67,8 @@ namespace rythm_forge{
             }
 
         }
+
+
         return {std::move(newSample),target_sr};
     }
 }

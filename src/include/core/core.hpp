@@ -2,7 +2,9 @@
 #define RYTHMFORGE_CORE_HPP
 
 #include <boost/multi_array.hpp>
-
+//TODO delete this
+#include <iostream>
+#define PRINT_VALUE(X) std::cout << (X) << std::endl
 namespace rythm_forge{
     using byte = unsigned char;
     using d2array = boost::multi_array<double, 2>;

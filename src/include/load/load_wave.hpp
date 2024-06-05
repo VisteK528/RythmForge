@@ -10,20 +10,36 @@
 #include "pcm.hpp"
 
 namespace rythm_forge::audio::load{
-    static std::map<std::string, uint8_t> waveFieldsMap = {
-            {"chunkID", 4},
-            {"chunkSize", 4},
-            {"format", 4},          // In Python and in documentation this should be equal to 4, however in cpp it only works with length 3
-            {"subchunk1ID", 3},
-            {"subchunk1Size", 4},
-            {"audioFormat", 2},
-            {"numChannels", 2},
-            {"sampleRate", 4},
-            {"byteRate", 4},
-            {"blockAlign", 2},
-            {"bitsPerSample", 2},
-            {"subchunk2ID", 4},
-            {"subchunk2Size", 4}
+//    static std::map<std::string, uint8_t> waveFieldsMap = {
+//            {"chunkID", 4},
+//            {"chunkSize", 4},
+//            {"format", 4},          // In Python and in documentation this should be equal to 4, however in cpp it only works with length 3
+//            {"subchunk1ID", 3},
+//            {"subchunk1Size", 4},
+//            {"audioFormat", 2},
+//            {"numChannels", 2},
+//            {"sampleRate", 4},
+//            {"byteRate", 4},
+//            {"blockAlign", 2},
+//            {"bitsPerSample", 2},
+//            {"subchunk2ID", 4},
+//            {"subchunk2Size", 4}
+//    };
+    enum class WaveField : uint8_t {
+        ChunkID = 4,
+        ChunkSize = 4,
+        Format = 4,
+        Subchunk1ID = 3,
+        Subchunk1Size = 4,
+        AudioFormat = 2,
+        NumChannels = 2,
+        SampleRate = 4,
+        ByteRate = 4,
+        BlockAlign = 2,
+        BitsPerSample = 2,
+        Subchunk2ID = 4,
+        Subchunk2Size = 4,
+        DataStart = 43
     };
 
 
