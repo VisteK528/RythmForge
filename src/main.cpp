@@ -2,7 +2,6 @@
 #include "include/load/load_wave.hpp"
 #include "include/load/pcm.hpp"
 #include "include/core/fft.hpp"
-#include "include/core/beat.hpp"
 #include "include/core/np_boost_array.hpp"
 int main() {
     std::ifstream file;

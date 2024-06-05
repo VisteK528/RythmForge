@@ -4,6 +4,7 @@
 #include "../include/core/fft.hpp"
 #include "../include/load/pcm.hpp"
 #include "../include/core/np_boost_array.hpp"
+#include "../include/core/feature.hpp"
 
 namespace py = pybind11;
 
@@ -138,13 +139,25 @@ py::tuple resample_python(py::array_t<double>& inputSample, int sr,int newSr){
 }
 
 py::array_t<double> calculate_magnitude_python(py::array_t<rythm_forge::dcomplex>& complexMatrix){
-    auto matrix = np2multiarray2d<rythm_forge::dcomplex,3>(complexMatrix);
+
+    auto matrix = np3DtoMultiarrayComplex(complexMatrix);
     auto magnitude = rythm_forge::fft::calculateMagnitude(matrix);
-    return multiarray2np<double,3>(magnitude);
+    return multiarray3DtoNp(magnitude);
 
 }
 
+double hz_to_mel(double hz_value){
+    return rythm_forge::feature::hzToMel(hz_value);
+}
 
+double mel_to_hz(double mel_value){
+        return rythm_forge::feature::melToHz(mel_value);
+}
+
+py::array_t<double> calculate_mel_filter_bank_python(uint32_t sampleRate,uint32_t nFft,uint32_t nMels){
+    auto bank = rythm_forge::feature::create_mel_filter_bank(sampleRate,nFft,nMels);
+    return multiarray2DtoNp(bank);
+}
 PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.doc() = "RythmForge core module";
     m.def("stft", &stft_python, "Short Time Fourier Transform");
@@ -153,4 +166,7 @@ PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.def("ifft", &ifft_python, "Fast Fourier Transform");
     m.def("resample",&resample_python, "Resample");
     m.def("magnitude",&calculate_magnitude_python,"Calculate magnitude of a complex-valued matrix");
+    m.def("hz_to_mel",py::vectorize(hz_to_mel),"Convert from hz to mel");
+    m.def("mel_to_hz",py::vectorize(mel_to_hz),"Convert from mel scale to hz");
+    m.def("mel_filter_bank",&calculate_mel_filter_bank_python);
 }
