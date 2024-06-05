@@ -7,12 +7,13 @@ from pathlib import Path
 from setuptools import Extension, setup, find_packages
 from setuptools.command.build_ext import build_ext
 
-__version__ = "0.0.0"
+__version__ = "1.0.0"
 
 
 class CMakeExtension(Extension):
     def __init__(self, name):
         Extension.__init__(self, name, sources=[])
+
 
 class CMakeBuild(build_ext):
     def run(self):
@@ -47,15 +48,15 @@ class CMakeBuild(build_ext):
             self.distribution.get_version())
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-        subprocess.check_call(['conan', 'profile',  'detect', '--force'])
+        subprocess.check_call(['conan', 'profile', 'detect', '--force'])
         subprocess.check_call(['conan', 'install', '.', f'--output-folder={self.build_temp}', '--build=missing'])
         # CMakeLists.txt is in the same directory as this setup.py file
         cmake_list_dir = os.path.abspath(os.path.dirname(__file__))
-        print('-'*10, 'Running CMake prepare', '-'*40)
+        print('-' * 10, 'Running CMake prepare', '-' * 40)
         subprocess.check_call(['cmake', cmake_list_dir] + cmake_args,
                               cwd=self.build_temp, env=env)
 
-        print('-'*10, 'Building extensions', '-'*40)
+        print('-' * 10, 'Building extensions', '-' * 40)
         cmake_cmd = ['cmake', '--build', '.'] + self.build_args
         subprocess.check_call(cmake_cmd,
                               cwd=self.build_temp)

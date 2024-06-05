@@ -67,7 +67,7 @@ py::array multiarray3DtoNp(const std::unique_ptr<boost::multi_array<double, 3>> 
 }
 
 
-py::array multiarray3DtoNpComplex(const std::unique_ptr<boost::multi_array<rythm_forge::dcomplex , 3>> &multiArray) {
+py::array multiarray3DtoNpComplex(const std::unique_ptr<boost::multi_array<rythm_forge::dcomplex, 3>> &multiArray) {
     py::array_t<rythm_forge::dcomplex> numpyArray({multiArray->shape()[0], multiArray->shape()[1], multiArray->shape()[2]});
     auto npArrayData = numpyArray.mutable_unchecked();
     for (size_t i = 0; i < multiArray->shape()[0]; ++i) {
@@ -80,15 +80,15 @@ py::array multiarray3DtoNpComplex(const std::unique_ptr<boost::multi_array<rythm
     return numpyArray;
 }
 
-std::unique_ptr<boost::multi_array<rythm_forge::dcomplex , 3>> np3DtoMultiarrayComplex(const py::array &npArray) {
-    auto r = npArray.unchecked<rythm_forge::dcomplex , 3>();
+std::unique_ptr<boost::multi_array<rythm_forge::dcomplex, 3>> np3DtoMultiarrayComplex(const py::array &npArray) {
+    auto r = npArray.unchecked<rythm_forge::dcomplex, 3>();
     std::vector<size_t> npArrayShape{};
     py::buffer_info buf_info = npArray.request();
     if (buf_info.ndim != 3) {
         throw std::runtime_error("Input dimensions do not match Boost MultiArray dimensions");
     }
 
-    auto boost_array = std::make_unique<boost::multi_array<rythm_forge::dcomplex , 3>>(boost::extents[buf_info.shape[0]][buf_info.shape[1]][buf_info.shape[2]]);
+    auto boost_array = std::make_unique<boost::multi_array<rythm_forge::dcomplex, 3>>(boost::extents[buf_info.shape[0]][buf_info.shape[1]][buf_info.shape[2]]);
 
     for (int64_t i = 0; i < buf_info.shape[0]; ++i) {
         for (int64_t j = 0; j < buf_info.shape[1]; ++j) {
@@ -99,13 +99,3 @@ std::unique_ptr<boost::multi_array<rythm_forge::dcomplex , 3>> np3DtoMultiarrayC
     }
     return boost_array;
 }
-//void test_function(const py::array &npArray) {
-//    auto a = np2multiarray2d<int, 2>(npArray);
-//    auto b = np2multiarray2d<int, 3>(npArray);
-//    auto c = np2multiarray2d<std::complex<double>, 3>(npArray);
-//    auto d = np2multiarray2d<double, 3>(npArray);
-//}
-//
-//void test_funcion2(boost::multi_array<double,2> array){
-//    auto r = multiarray2np<double,2>(array);
-//}

@@ -1,3 +1,3 @@
-from .spectrogram import melspectrogram, spectrogram
+from .spectrogram import spectrogram
 
-__all__ = ["melspectrogram", "spectrogram"]
+__all__ = ["spectrogram"]

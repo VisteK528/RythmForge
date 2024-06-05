@@ -3,7 +3,9 @@ from ..exceptions.exceptions import RythmForgeValueError
 from .._lib import rythm_forge_core_cpp as core_backend
 
 
-def stft(samples: np.ndarray, n_fft=2048, hop_size=512, window_length=None, center=True):
+def stft(
+    samples: np.ndarray, n_fft=2048, hop_size=512, window_length=None, center=True
+):
     """
     Compute the Short-Time Fourier Transform (STFT) of the input samples.
 
@@ -41,7 +43,9 @@ def stft(samples: np.ndarray, n_fft=2048, hop_size=512, window_length=None, cent
     return result
 
 
-def istft(stft_matrix: np.ndarray, n_fft=2048, hop_size=512, window_length=None, center=True):
+def istft(
+    stft_matrix: np.ndarray, n_fft=2048, hop_size=512, window_length=None, center=True
+):
     """
     Compute the Inverse Short-Time Fourier Transform (ISTFT) of the input STFT matrix.
 
@@ -67,7 +71,9 @@ def istft(stft_matrix: np.ndarray, n_fft=2048, hop_size=512, window_length=None,
         window_length = n_fft
 
     if stft_matrix.ndim == 2:
-        stft_matrix = stft_matrix.reshape((1, stft_matrix.shape[0], stft_matrix.shape[1]))
+        stft_matrix = stft_matrix.reshape(
+            (1, stft_matrix.shape[0], stft_matrix.shape[1])
+        )
 
     if window_length > n_fft:
         raise RythmForgeValueError("Window length could not be greater than n_fft!")

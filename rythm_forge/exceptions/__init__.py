@@ -1,7 +1,11 @@
-from .exceptions import RythmForgeValueError, RythmForgeTypeError, RythmForgeUnsupportedAudioFormat
+from .exceptions import (
+    RythmForgeValueError,
+    RythmForgeTypeError,
+    RythmForgeUnsupportedAudioFormat,
+)
 
 __all__ = [
     "RythmForgeTypeError",
     "RythmForgeValueError",
-    "RythmForgeUnsupportedAudioFormat"
+    "RythmForgeUnsupportedAudioFormat",
 ]

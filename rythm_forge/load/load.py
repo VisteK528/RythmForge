@@ -19,12 +19,16 @@ def load(filename: str, mono=True):
     if filename.endswith(".wav"):
         y, sr = load_backend.load_wav_file(filename)
     else:
-        raise exceptions.RythmForgeUnsupportedAudioFormat("Audio file has extension for unsupported format!")
+        raise exceptions.RythmForgeUnsupportedAudioFormat(
+            "Audio file has extension for unsupported format!"
+        )
 
     y.astype(np.float64)
     if mono:
         y = to_mono(y)
-        y = y.reshape(y.shape[1], )
+        y = y.reshape(
+            y.shape[1],
+        )
     return y, sr
 
 

@@ -40,7 +40,7 @@ def mel_filter_bank(sr: int, n_fft: int, n_mel: int) -> np.ndarray:
 
     """
     mel_filter = core_backend.mel_filter_bank(sr, n_fft, n_mel)
-    return mel_filter
+    return mel_filter.T
 
 
 def hz_to_mel(array: np.ndarray):
@@ -67,6 +67,37 @@ def magnitude(complex_matrix: np.ndarray):
     :return: np.ndarray
     """
     return core_backend.magntude(complex_matrix)
+
+
+def melspectrogram(
+    stft_matrix: np.ndarray, n_fft=2048, sr=44100, n_mels=128
+) -> np.ndarray:
+    """
+    Convert an STFT matrix to a mel spectrogram.
+
+    This function transforms a Short-Time Fourier Transform (STFT) matrix into a mel spectrogram,
+    where the frequency axis is mapped to the mel scale, which is a perceptually motivated scale of pitches.
+
+    :param stft_matrix: np.ndarray
+        The input STFT matrix of shape (..., n_freqs, n_times), representing the magnitude of the STFT of the audio signal.
+    :param n_fft: int, optional, default=2048
+        The number of FFT components, corresponding to the number of frequency bins in the STFT. This value determines the resolution of the frequency axis.
+    :param sr: int, optional, default=44100
+        The sample rate of the audio signal. This is used to compute the mel filter bank.
+    :param n_mels: int, optional, default=128
+        The number of mel bands to generate. This determines the resolution of the mel scale.
+    :return: np.ndarray
+        The mel spectrogram of shape (..., n_mels, n_times), where the frequency bins are replaced by mel bands.
+    """
+
+    if stft_matrix.ndim != 2:
+        raise RythmForgeValueError(
+            "Wrong STFT matrix dim number! STFT should have ndim=2"
+        )
+
+    mel_filter = mel_filter_bank(sr, n_fft, n_mels)
+
+    return np.einsum("...ft,mf->...mt", stft_matrix, mel_filter, optimize=True)
 
 
 def beat_estimation():
