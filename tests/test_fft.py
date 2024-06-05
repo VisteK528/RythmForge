@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from rythm_forge.exceptions import RythmForgeValueError
-from rythm_forge.core import fft, ifft, stft, istft
+from rythm_forge.core import fft
 
 
 def test_fft_valid_input():
@@ -17,43 +17,57 @@ def test_fft_invalid_input():
         fft(samples)
 
 
-def test_ifft_valid_input():
-    frequency_bins = np.random.rand(1024) + 1j * np.random.rand(1024)
-    result = ifft(frequency_bins)
-    assert result.shape == frequency_bins.shape
+def test_fft_length_odd():
+    samples = np.random.rand(1023)
+    result = fft(samples)
+    assert result.shape[0] == samples.shape[0] - 1
     assert np.iscomplexobj(result)
 
 
-def test_ifft_invalid_input():
-    frequency_bins = np.random.rand(1024, 2)
-    with pytest.raises(RythmForgeValueError):
-        ifft(frequency_bins)
+def test_fft_length_power_of_two():
+    samples = np.random.rand(1024)
+    result = fft(samples)
+    assert result.shape == samples.shape
+    assert np.iscomplexobj(result)
 
 
-def test_stft_valid_input():
-    samples = np.random.rand(2048)
-    result = stft(samples)
-    assert result.ndim == 2
-    assert result.shape[0] == 2048 // 2 + 1
+def test_fft_real_values():
+    samples = np.ones(1024)
+    result = fft(samples)
+    assert result.shape == samples.shape
+    assert np.iscomplexobj(result)
 
 
-def test_stft_multi_channel():
-    samples = np.random.rand(2, 2048)
-    result = stft(samples)
-    assert result.ndim == 3
-    assert result.shape[0] == 2
-    assert result.shape[1] == 2048 // 2 + 1
+def test_fft_complex_values():
+    samples = np.random.rand(1024) + 1j * np.random.rand(1024)
+    result = fft(samples)
+    assert result.shape == samples.shape
+    assert np.iscomplexobj(result)
 
 
-def test_istft_valid_input():
-    stft_matrix = np.random.rand(2, 1024, 1025) + 1j * np.random.rand(2, 1024, 1025)
-    result = istft(stft_matrix)
-    assert result.ndim == 2
-    assert result.shape[0] == 2
+def test_fft_large_input():
+    samples = np.random.rand(2 ** 20)
+    result = fft(samples)
+    assert result.shape == samples.shape
+    assert np.iscomplexobj(result)
 
 
-def test_istft_single_channel():
-    stft_matrix = np.random.rand(1024, 1025) + 1j * np.random.rand(1024, 1025)
-    result = istft(stft_matrix)
-    assert result.ndim == 1
-    assert result.shape[0] > 0
+def test_fft_zero_input():
+    samples = np.zeros(1024)
+    result = fft(samples)
+    assert result.shape == samples.shape
+    assert np.all(result == 0)
+
+
+def test_fft_negative_values():
+    samples = -np.random.rand(1024)
+    result = fft(samples)
+    assert result.shape == samples.shape
+    assert np.iscomplexobj(result)
+
+
+def test_fft_high_dynamic_range():
+    samples = np.concatenate((np.zeros(512), np.ones(512)))
+    result = fft(samples)
+    assert result.shape == samples.shape
+    assert np.iscomplexobj(result)

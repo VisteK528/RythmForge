@@ -115,16 +115,10 @@ namespace rythm_forge::fft {
         if (center) {
             samplesLength += windowLength / 2;
             samples->resize(boost::extents[samplesLength][numChannels]);
-            samples->reindex(windowLength / 2);
-            for (size_t i = 0; i < windowLength / 2; ++i) {
-                for (size_t j = 0; j < numChannels; ++j) {
-                    (*samples)[i][j] = 0.0;
-                }
-            }
         }
 
         const size_t frequencyBins = nFft / 2 + 1;
-        const size_t frames = (samplesLength - nFft) / hopSize + 1;
+        const size_t frames = (samplesLength - windowLength) / hopSize + 1;
         std::unique_ptr<c3array> stft_matrix = std::make_unique<c3array>(
                 (boost::extents[numChannels][frequencyBins][frames]));
 
@@ -140,11 +134,9 @@ namespace rythm_forge::fft {
                 }
 
                 // fft
-                std::vector<dcomplex> frameVector;
-                frameVector.reserve(frameLength);
-                frameVector.resize(frameLength);
-                std::fill(frameVector.begin(), frameVector.end(), 0.0);
-                std::transform(frameHann.begin(), frameHann.end(), frameVector.begin(),
+                // Zero-padding to nFft
+                std::vector<dcomplex> frameVector(nFft, 0.0);
+                std::transform(frameHann.begin(), frameHann.end(), frameVector.begin() + (nFft - windowLength) / 2,
                                [](auto sample) { return sample[0]; });
                 std::vector<dcomplex> fftResult = fft(frameVector);
 
