@@ -7,3 +7,10 @@ requires = [
     "cmake>=3.12"
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+dependencies = [
+    "numpy>=1.2",
+    "matplotlib>=3.4",
+    "pybind11"
+]

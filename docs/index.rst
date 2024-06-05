@@ -16,12 +16,24 @@ Quick overview
    :alt: Python badge
    :target: https://github.com/VisteK528/RythmForge/actions/workflows/main.yaml
 
+GitHub Repository
+-----------------
+
+You can find the source code and contribute to the project on GitHub:
+
+`Rythm Forge GitHub Repository <https://github.com/VisteK528/RythmForge>`_
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Project info
+
+   introduction
+   tools
 
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started
 
-   introduction
    installation
    usage
 
@@ -34,6 +46,6 @@ Quick overview
    load
 
 References
-==================
+==========
 
 * :ref:`genindex`

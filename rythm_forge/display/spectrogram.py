@@ -56,8 +56,7 @@ def spectrogram(
 
     Returns:
     --------
-    None
-        The function displays the spectrogram plot and does not return any value.
+    AxesImage
     """
 
     if not np.issubdtype(data.dtype, np.floating):
@@ -80,7 +79,7 @@ def spectrogram(
         fig, ax = plt.subplots(figsize=(10, 5))
         plt.tight_layout()
 
-    ax.imshow(
+    img = ax.imshow(
         data,
         aspect="auto",
         origin="lower",
@@ -106,3 +105,4 @@ def spectrogram(
 
     plt.ylabel("Hz")
     plt.ylim([fmin, fmax])
+    return img
