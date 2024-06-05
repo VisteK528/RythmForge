@@ -1,9 +1,10 @@
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include "../include/core/fft.hpp"
+#include "../include/load/pcm.hpp"
 #include "../include/core/np_boost_array.hpp"
 #include "../include/core/feature.hpp"
-#include "../include/load/pcm.hpp"
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
+
 
 namespace py = pybind11;
 
@@ -121,28 +122,16 @@ py::array_t<double> istft_python(py::array_t<rythm_forge::dcomplex> &input_sampl
     return numpyArray;
 }
 
-py::tuple resample_python(py::array_t<double> &inputSample, int sr, int newSr) {
+py::tuple resample_python(py::array_t<double>& inputSample, int sr,int newSr){
     py::buffer_info buf_info = inputSample.request();
     auto dataArray = np2DtoMultiarray(inputSample);
     rythm_forge::PCMData data(std::move(dataArray), sr);
-    auto newPCM = rythm_forge::PCMData::resample(data, newSr);
+    auto newPCM = rythm_forge::PCMData::resample(data,newSr);
 
     py::array_t<double> numpyArray = multiarray2DtoNp(newPCM.getSamples());
-    return py::make_tuple(numpyArray, newSr);
+    return py::make_tuple(numpyArray,newSr);
 }
 
-
-py::array_t<double> create_mel_filter_bank_matrix(int sampleRate, int nFft, int nMels) {
-    std::unique_ptr<rythm_forge::d2array> mel_filter_bank_matrix = rythm_forge::beat::create_mel_filter_bank(sampleRate, nFft, nMels);
-    return multiarray2np(*mel_filter_bank_matrix);
-}
-
-
-    auto matrix = np3DtoMultiarrayComplex(complexMatrix);
-    auto magnitude = rythm_forge::fft::calculateMagnitude(matrix);
-    return multiarray3DtoNp(magnitude);
-
-}
 
 double hz_to_mel(double hz_value){
     return rythm_forge::feature::hzToMel(hz_value);
@@ -150,6 +139,14 @@ double hz_to_mel(double hz_value){
 
 double mel_to_hz(double mel_value){
         return rythm_forge::feature::melToHz(mel_value);
+}
+
+py::array_t<double> calculate_magnitude_python(py::array_t<rythm_forge::dcomplex>& complexMatrix){
+
+    auto matrix = np3DtoMultiarrayComplex(complexMatrix);
+    auto magnitude = rythm_forge::fft::calculateMagnitude(matrix);
+    return multiarray3DtoNp(magnitude);
+
 }
 
 py::array_t<double> calculate_mel_filter_bank_python(uint32_t sampleRate,uint32_t nFft,uint32_t nMels){
