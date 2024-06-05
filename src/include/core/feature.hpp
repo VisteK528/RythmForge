@@ -5,11 +5,12 @@ namespace rythm_forge::feature {
     template<typename T>
         requires std::convertible_to<T, double>
     double hzToMel(T frequency) {
-        return 2595 * std::log10(1.0 + frequency / 700);
+        return 2595 * std::log10(1.0 + (double )frequency / 700);
     }
     template<typename T>
         requires std::convertible_to<T, double>
     double melToHz(T mel) {
+        PRINT_VALUE(700 * (std::pow(10, mel / 2595) - 1));
         return 700 * (std::pow(10, mel / 2595) - 1);
     }
 

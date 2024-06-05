@@ -163,6 +163,6 @@ PYBIND11_MODULE(rythm_forge_core_cpp, m) {
     m.def("magnitude",&calculate_magnitude_python,"Calculate magnitude of a complex-valued matrix");
     m.def("hz_to_mel",py::vectorize(hz_to_mel),"Convert from hz to mel");
     m.def("mel_to_hz",py::vectorize(mel_to_hz),"Convert from mel scale to hz");
-    m.def("mel_filter_bank",&calculate_mel_filter_bank_python);
+    m.def("mel_filter_bank",&calculate_mel_filter_bank_python,"Get mel filter bank");
 
 }
