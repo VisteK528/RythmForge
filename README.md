@@ -1,4 +1,6 @@
 # RythmForge audio&signal processing library
+![d](https://github.com/VisteK528/RythmForge/actions/workflows/main.yaml/badge.svg)
+![Python3.10](https://img.shields.io/badge/python-3.10-g.svg)
 ## Autorzy
 
 - Piotr Patek
