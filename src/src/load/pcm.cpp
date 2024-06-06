@@ -1,18 +1,19 @@
-#include <numeric>
 #include "../../include/load/pcm.hpp"
+#include <iostream>
+#include <numeric>
 
-namespace rythm_forge{
-    PCMData::PCMData(std::unique_ptr<d2array > samples, unsigned int sampleRate): samples_(std::move(samples)), sampleRate_(sampleRate) {
-        if(this->samples_){
+
+namespace rythm_forge {
+    PCMData::PCMData(std::unique_ptr<d2array> samples, unsigned int sampleRate) : samples_(std::move(samples)), sampleRate_(sampleRate) {
+        if (this->samples_) {
             this->numChannels_ = samples_->shape()[1];
         }
     }
-    PCMData::PCMData(const PCMData& other) : sampleRate_(other.sampleRate_) {
+    PCMData::PCMData(const PCMData &other) : sampleRate_(other.sampleRate_) {
         if (other.samples_) {
             this->samples_ = std::make_unique<d2array>(*other.samples_);
             this->numChannels_ = samples_->shape()[1];
-        }
-        else {
+        } else {
             this->samples_ = nullptr;
         }
     }
@@ -30,11 +31,11 @@ namespace rythm_forge{
     }
 
     void PCMData::toMono() {
-        if(this->numChannels_ > 1){
+        if (this->numChannels_ > 1) {
             std::unique_ptr<d2array> array_mono = std::make_unique<d2array>(boost::extents[this->samples_->shape()[0]][1]);
 
-            for(size_t i = 0; i < array_mono->shape()[0]; ++i){
-                double sum = std::accumulate((*this->samples_)[i].begin(),(*this->samples_)[i].end(), 0.0) / this->samples_->shape()[1];
+            for (size_t i = 0; i < array_mono->shape()[0]; ++i) {
+                double sum = std::accumulate((*this->samples_)[i].begin(), (*this->samples_)[i].end(), 0.0) / this->samples_->shape()[1];
                 (*array_mono)[i][0] = sum;
             }
             this->samples_ = std::move(array_mono);
@@ -45,21 +46,20 @@ namespace rythm_forge{
 
         unsigned int sr = other.getSampleRate();
         uint16_t numChannels = other.numChannels_;
-        double ratio =(double)target_sr/sr;
+        double ratio = (double) target_sr / sr;
 
-        std::unique_ptr<d2array> newSample = std::make_unique<d2array>(boost::extents[(int64_t)(ratio*other.getSamples()->shape()[0])][numChannels]);
-
-        for(int64_t i =0; i<(int64_t)(other.getSamples()->shape()[0]*ratio);++i){
-            double index = (double) i/ratio;
+        int32_t newSampleCount = (ratio * other.getSamples()->shape()[0]);
+        std::unique_ptr<d2array> newSample = std::make_unique<d2array>(boost::extents[newSampleCount][numChannels]);
+        for (int64_t i = 0; i < (int64_t) (other.getSamples()->shape()[0] * ratio); ++i) {
+            double index = (double) i / ratio;
             auto index_floor = (int64_t) floor(index);
-            double frac = index-index_floor;
+            double frac = index - index_floor;
 
-            for(int j =0;j<numChannels;++j){
-                double sample = (1-frac)*other.getSamples()->operator[](index_floor)[j]+frac*other.getSamples()->operator[](index_floor+1)[j];
+            for (int j = 0; j < numChannels; ++j) {
+                double sample = (1 - frac) * other.getSamples()->operator[](index_floor)[j] + frac * other.getSamples()->operator[](index_floor + 1)[j];
                 newSample->operator[](i)[j] = sample;
             }
-
         }
-        return {std::move(newSample),target_sr};
+        return {std::move(newSample), target_sr};
     }
-}
+}// namespace rythm_forge
