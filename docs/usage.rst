@@ -17,8 +17,6 @@ Compute STFT matrix that is used in both spectrogram and melspectrogram
 
 Spectrogram
 -------------
-
-### Spectrogram
 Display the power spectrogram:
 
 .. code-block:: python

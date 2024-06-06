@@ -10,7 +10,7 @@ from .feature_functions import (
     # tempo_estimation,
     melspectrogram,
     power_to_dB,
-    amplitude_to_dB
+    amplitude_to_dB,
 )
 
 __all__ = [
@@ -27,5 +27,5 @@ __all__ = [
     # "tempo_estimation",
     "melspectrogram",
     "power_to_dB",
-    "amplitude_to_dB"
+    "amplitude_to_dB",
 ]

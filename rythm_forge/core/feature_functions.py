@@ -17,7 +17,7 @@ def resample(y: np.ndarray, sr: int, new_sr=8000) -> tuple[np.ndarray, int]:
         y_hat: mp.ndarray, y resampled from sr to new_sr
         new_sr:int sampling rate used in resampling
     """
-    print(y.shape)
+
     resampled_y, new_sr = core_backend.resample(y, sr, new_sr)
     return resampled_y, new_sr
 
@@ -48,6 +48,7 @@ def hz_to_mel(array: np.ndarray):
     Converts Hz to Mels.
     :param array: np.ndarray of values in Hz to be converted to Mels
     """
+
     return core_backend.hz_to_mel(array)
 
 
@@ -56,27 +57,29 @@ def mel_to_hz(array: np.ndarray):
     Converts Mels to Hz
     :param array: np.ndarray of values in Mels to be converted to Hz
     """
+
     return core_backend.mel_to_hz(array)
 
 
 def magnitude(complex_matrix: np.ndarray):
     """
-    Converts matrix filled with complex values to matrix of magnitudes of elements, simillar to np.abs(array)
+    Converts matrix filled with complex values to matrix of magnitudes of elements, similar to np.abs(array)
     :param complex_matrix: np.ndarray
         Array with complex values, most often from stft
     :return: np.ndarray
     """
+
     return np.abs(complex_matrix)
-    # return core_backend.magnitude(complex_matrix)
 
 
 def find_peaks(y: np.ndarray):
     """
-    Iterates through 1D array and returns indices of peak samples, meaning sample before and after are smaller than checked.
+    Iterates through 1D array and returns indices of peak samples, meaning sample before and after are
+     smaller than checked.
     :param y: 1D array, like onset_strength envelope, which elements will be compared
     :return: 1D np.nadrray, with elements being indices of beats that are peaks in the series
     """
-    print(y)
+
     if y.ndim != 2:
         raise ValueError(f"Given vector y must be 1D, but {y.ndim}  was given")
     return core_backend.find_peaks(y)
@@ -97,6 +100,7 @@ def onset_strength(y: np.ndarray, sr: int):
         :return: np.ndarray
             The onset strength envelope of the audio signal as a 1D numpy array.
     """
+
     y_resampled, sr = resample(y, sr, 8000)
     S = stft(y_resampled, 2048, 512)
     S = magnitude(S)
@@ -130,6 +134,7 @@ def tempo_estimation(y: np.ndarray, sr: int):
         The sample rate of the input audio signal.
     :return: int representing calculated tempo in bpm
     """
+
     envelope = onset_strength(y, sr)
     peaks = find_peaks(envelope)
     peak_intervals = np.diff(peaks) / sr
@@ -145,6 +150,7 @@ def beat_estimation(y: np.ndarray, sr: int):
         The sample rate of the input audio signal.
     :return: np.ndarray, with samples numbers being beats
     """
+
     tempo = tempo_estimation(y, sr)
     beat_interval = 60 / tempo
     beat_interval_samples = int(beat_interval / 8000)
@@ -168,6 +174,7 @@ def amplitude_to_dB(A, ref=1.0, amin=1e-10, top_db=80.0):
     :return: np.ndarray
         The dB-scaled spectrogram.
     """
+
     A = np.asarray(A)
     if callable(ref):
         ref_value = ref(A)
@@ -179,7 +186,7 @@ def amplitude_to_dB(A, ref=1.0, amin=1e-10, top_db=80.0):
 
 
 def melspectrogram(
-        stft_matrix: np.ndarray, n_fft=2048, sr=44100, n_mels=128
+    stft_matrix: np.ndarray, n_fft=2048, sr=44100, n_mels=128
 ) -> np.ndarray:
     """
     Convert an STFT matrix to a mel spectrogram.
