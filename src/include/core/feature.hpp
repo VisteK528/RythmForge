@@ -14,6 +14,13 @@ namespace rythm_forge::feature {
     }
 
     std::unique_ptr<d2array> create_mel_filter_bank(uint32_t sampleRate, uint32_t nFft, uint32_t nMels);
-    std::vector<int> find_pick(const std::vector<double>& onset_envelope);
+    std::vector<int> find_pick(std::vector<double> onset_envelope);
+class EmptyVector:public std::exception{
+private:
+    std::string msg;
+public:
+    explicit EmptyVector(const std::string& message):msg(message){}
+    [[nodiscard]] const char *what() const noexcept override { return msg.c_str(); }
+};
 }// namespace rythm_forge::feature
 #endif//RYTHMFORGE_FEATURE_H

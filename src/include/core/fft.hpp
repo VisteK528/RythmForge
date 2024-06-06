@@ -41,7 +41,7 @@ private:
 
 public:
     explicit InvalidNFFTSize(const std::string &message) : msg(message) {}
-    const char *what() const noexcept override { return msg.c_str(); }
+    [[nodiscard]] const char *what() const noexcept override { return msg.c_str(); }
 };
 
 

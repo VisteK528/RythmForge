@@ -90,17 +90,28 @@ def onset_strength(y: np.ndarray, sr: int):
     :return:
     """
     y_resampled, sr = resample(y, sr, 8000)
-    stft_matrix = stft(y_resampled, 2048, 512)
-    hz_spectogram = magnitude(stft_matrix)
+    S = stft(y_resampled, 2048, 512)
+    S = magnitude(S)
     mel_filter = mel_filter_bank(sr, 2048, 40)
     mel_filter_expanded = mel_filter[np.newaxis,:,:]
-    mel_spectogram = np.abs(np.dot(mel_filter_expanded, hz_spectogram)[0])
-    db_spectrum = power_to_dB(mel_spectogram)
-    # ref = db_spectrum
-
-    onset_env = np.diff(db_spectrum,axis=1)
+    S = np.abs(np.dot(mel_filter_expanded, S)[0])
+    S = power_to_dB(S)
+    ref = S
+    # onset_env = np.diff(db_spectrum,axis=1)
     # onset_env = np.max(0.0,onset_env)
-    onset_env[onset_env<0] = 0
+    # onset_env[onset_env<0] = 0
+    lag = 3
+    onset_env = S[..., lag:] - ref[..., :-lag]
+    onset_env = np.maximum(0.0, onset_env)
+
+    pad_width = lag
+    # Counter-act framing effects. Shift the onsets by n_fft / hop_length
+    pad_width += 2048 // (2 * 512)
+
+    padding = [(0, 0) for _ in onset_env.shape]
+    padding[-1] = (int(pad_width), 0)
+    onset_env = np.pad(onset_env, padding, mode="constant")
+
     return np.sum(onset_env, axis=0)
 
 

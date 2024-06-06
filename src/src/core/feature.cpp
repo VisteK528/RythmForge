@@ -1,4 +1,5 @@
 #include "../../include/core/feature.hpp"
+#include <iostream>
 
 namespace rythm_forge::feature {
     std::unique_ptr<rythm_forge::d2array> create_mel_filter_bank(uint32_t sampleRate, uint32_t nFft, uint32_t nMels) {
@@ -65,11 +66,25 @@ namespace rythm_forge::feature {
         return melFilterBank;
     }
 
-    std::vector<int> find_pick(const std::vector<double>& onset_envelope){
+    std::vector<int> find_pick(std::vector<double> onset_envelope) {
+        if(onset_envelope.empty()){
+            throw EmptyVector("Vector passed cannot be empty!");
+        }
+        std::vector<double> normalization_factor(2,0);
+        normalization_factor.reserve(onset_envelope.size());
+        for (auto it = onset_envelope.begin() + 2; it != onset_envelope.end() - 2; ++it) {
+            auto mean_factor = (std::accumulate(it - 2, it + 2, 0.0)) / 5.0;
+            normalization_factor.push_back(mean_factor);
+        }
+        normalization_factor.push_back(0);
+        normalization_factor.push_back(0);
         std::vector<int> peaks;
+        std::transform(onset_envelope.begin(), onset_envelope.end(), normalization_factor.begin(),
+                       onset_envelope.begin(), [](auto &a, auto &b) { return a - b; });
+
         for (size_t i = 1; i < onset_envelope.size() - 1; ++i) {
             if (onset_envelope[i] > onset_envelope[i - 1] && onset_envelope[i] > onset_envelope[i + 1]) {
-                peaks.push_back((int)i);
+                peaks.push_back((int) i);
             }
         }
         return peaks;
