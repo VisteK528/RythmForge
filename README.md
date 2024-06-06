@@ -53,7 +53,7 @@ pip3 install .
 
 ## Dokumentacja biblioteki
 
-[Dokumentacja]([https://vistek528.github.io/RythmForge/](https://vistek528.github.io/RythmForge/)) biblioteki zawierająca opisy dostępnych funkcji i przykłady wykorzystania.
+[Dokumentacja](https://vistek528.github.io/RythmForge/) biblioteki zawierająca opisy dostępnych funkcji i przykłady wykorzystania.
 
 ## Uruchamianie testów
 
