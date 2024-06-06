@@ -6,8 +6,8 @@ from .feature_functions import (
     hz_to_mel,
     mel_to_hz,
     magnitude,
-    beat_estimation,
-    tempo_estimation,
+    # beat_estimation,
+    # tempo_estimation,
     melspectrogram,
     power_to_dB,
     amplitude_to_dB
@@ -23,7 +23,9 @@ __all__ = [
     "hz_to_mel",
     "mel_to_hz",
     "magnitude",
-    "beat_estimation",
-    "tempo_estimation",
+    # "beat_estimation",
+    # "tempo_estimation",
     "melspectrogram",
+    "power_to_dB",
+    "amplitude_to_dB"
 ]

@@ -6,7 +6,7 @@ from .fft_functions import stft
 
 def resample(y: np.ndarray, sr: int, new_sr=8000) -> tuple[np.ndarray, int]:
     """
-        Resample a time series from sr to new_sr
+       Resample a time series from sr to new_sr
     :param y: np.ndarray
         A 1D or 2D numpy array of input audio samples, with each row being different channel
     :param sr: int
@@ -18,7 +18,7 @@ def resample(y: np.ndarray, sr: int, new_sr=8000) -> tuple[np.ndarray, int]:
         new_sr:int sampling rate used in resampling
     """
     print(y.shape)
-    resampled_y,new_sr = core_backend.resample(y, sr, new_sr)
+    resampled_y, new_sr = core_backend.resample(y, sr, new_sr)
     return resampled_y, new_sr
 
 
@@ -84,28 +84,33 @@ def find_peaks(y: np.ndarray):
 
 def onset_strength(y: np.ndarray, sr: int):
     """
+    Compute the onset strength envelope of an audio signal.
 
-    :param y:
-    :param sr:
-    :return:
+        The onset strength envelope is a measure of the sudden increases in energy across frequency bands,
+        which typically correspond to note onsets or other transient events in the audio signal.
+
+        :param y: np.ndarray
+            The input audio signal as a 2D numpy array.
+        :param sr: int
+            The sample rate of the input audio signal.
+
+        :return: np.ndarray
+            The onset strength envelope of the audio signal as a 1D numpy array.
     """
     y_resampled, sr = resample(y, sr, 8000)
     S = stft(y_resampled, 2048, 512)
     S = magnitude(S)
     mel_filter = mel_filter_bank(sr, 2048, 40)
-    mel_filter_expanded = mel_filter[np.newaxis,:,:]
+    mel_filter_expanded = mel_filter[np.newaxis, :, :]
     S = np.abs(np.dot(mel_filter_expanded, S)[0])
     S = power_to_dB(S)
     ref = S
-    # onset_env = np.diff(db_spectrum,axis=1)
-    # onset_env = np.max(0.0,onset_env)
-    # onset_env[onset_env<0] = 0
+
     lag = 3
     onset_env = S[..., lag:] - ref[..., :-lag]
     onset_env = np.maximum(0.0, onset_env)
 
     pad_width = lag
-    # Counter-act framing effects. Shift the onsets by n_fft / hop_length
     pad_width += 2048 // (2 * 512)
 
     padding = [(0, 0) for _ in onset_env.shape]
@@ -116,6 +121,15 @@ def onset_strength(y: np.ndarray, sr: int):
 
 
 def tempo_estimation(y: np.ndarray, sr: int):
+    """
+    Does not work, don't know why
+    Estimates tempo of the signal, returns bpm
+    :param y: np.ndarray
+        The input audio signal as a 1D numpy array.
+    :param sr: int
+        The sample rate of the input audio signal.
+    :return: int representing calculated tempo in bpm
+    """
     envelope = onset_strength(y, sr)
     peaks = find_peaks(envelope)
     peak_intervals = np.diff(peaks) / sr
@@ -123,6 +137,14 @@ def tempo_estimation(y: np.ndarray, sr: int):
 
 
 def beat_estimation(y: np.ndarray, sr: int):
+    """
+    Does not work, don't know why
+    :param y: np.ndarray
+        The input audio signal as a 1D numpy array.
+    :param sr: int
+        The sample rate of the input audio signal.
+    :return: np.ndarray, with samples numbers being beats
+    """
     tempo = tempo_estimation(y, sr)
     beat_interval = 60 / tempo
     beat_interval_samples = int(beat_interval / 8000)
