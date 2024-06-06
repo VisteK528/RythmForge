@@ -30,7 +30,7 @@ Wykorzystane wersje języków:
 
 ## Architektura
 
-![Struktura repozytorium](docs\images\ProjectDiagram.png)
+![Struktura repozytorium](/docs/images/ProjectDiagram.png)
 
 Struktura repozytorium
 
