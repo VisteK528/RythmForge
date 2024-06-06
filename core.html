@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core &mdash; Rythm Forge 0.01 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=6ca3c713"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Display" href="display.html" />
+    <link rel="prev" title="Spectrogram &amp; Melspectrogram" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Rythm Forge
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Project info</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools and Automation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Spectrogram &amp; Melspectrogram</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.amplitude_to_dB"><code class="docutils literal notranslate"><span class="pre">amplitude_to_dB()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.fft"><code class="docutils literal notranslate"><span class="pre">fft()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.hz_to_mel"><code class="docutils literal notranslate"><span class="pre">hz_to_mel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.ifft"><code class="docutils literal notranslate"><span class="pre">ifft()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.istft"><code class="docutils literal notranslate"><span class="pre">istft()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.magnitude"><code class="docutils literal notranslate"><span class="pre">magnitude()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.mel_filter_bank"><code class="docutils literal notranslate"><span class="pre">mel_filter_bank()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.mel_to_hz"><code class="docutils literal notranslate"><span class="pre">mel_to_hz()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.melspectrogram"><code class="docutils literal notranslate"><span class="pre">melspectrogram()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.power_to_dB"><code class="docutils literal notranslate"><span class="pre">power_to_dB()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.resample"><code class="docutils literal notranslate"><span class="pre">resample()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rythm_forge.core.stft"><code class="docutils literal notranslate"><span class="pre">stft()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load.html">Load</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Rythm Forge</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Core</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/core.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-rythm_forge.core">
+<span id="core"></span><h1>Core<a class="headerlink" href="#module-rythm_forge.core" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.amplitude_to_dB">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">amplitude_to_dB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rythm_forge/core/feature_functions.html#amplitude_to_dB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.amplitude_to_dB" title="Link to this definition"></a></dt>
+<dd><p>Convert an amplitude spectrogram to decibel (dB) units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> – np.ndarray
+Input amplitude spectrogram.</p></li>
+<li><p><strong>ref</strong> – float or callable
+Reference value. If scalar, amplitude is scaled relative to <cite>ref</cite>. If callable, the reference value is computed as <cite>ref(A)</cite>.</p></li>
+<li><p><strong>amin</strong> – float
+Minimum threshold for <cite>A</cite> and <cite>ref</cite>.</p></li>
+<li><p><strong>top_db</strong> – float
+Threshold the output at <cite>top_db</cite> below the peak.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray
+The dB-scaled spectrogram.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.fft">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/rythm_forge/core/fft_functions.html#fft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.fft" title="Link to this definition"></a></dt>
+<dd><p>Compute the Fast Fourier Transform (FFT) of the input samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>samples</strong> – A 1D numpy array of input audio samples.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 1D numpy array containing the frequency bins of the FFT.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RythmForgeValueError</strong> – If the input samples array is not 1D.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.hz_to_mel">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">hz_to_mel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rythm_forge/core/feature_functions.html#hz_to_mel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.hz_to_mel" title="Link to this definition"></a></dt>
+<dd><p>Converts Hz to Mels.
+:param array: np.ndarray of values in Hz to be converted to Mels</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.ifft">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">ifft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/rythm_forge/core/fft_functions.html#ifft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.ifft" title="Link to this definition"></a></dt>
+<dd><p>Compute the Inverse Fast Fourier Transform (IFFT) of the input frequency bins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>frequency_bins</strong> – A 1D numpy array of frequency bins.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 1D numpy array containing the reconstructed audio samples.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RythmForgeValueError</strong> – If the input frequency bins array is not 1D.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.istft">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">istft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stft_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_fft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rythm_forge/core/fft_functions.html#istft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.istft" title="Link to this definition"></a></dt>
+<dd><p>Compute the Inverse Short-Time Fourier Transform (ISTFT) of the input STFT matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stft_matrix</strong> – np.ndarray
+A 2D or 3D numpy array containing the STFT of an audio signal. The shape should be
+(channels, frequency_bins, frames) if 3D, otherwise (frequency_bins, frames).</p></li>
+<li><p><strong>n_fft</strong> – int, optional
+The number of frequency bins. Default is 2048. Must be a power of 2.</p></li>
+<li><p><strong>hop_size</strong> – int, optional
+The hop size (stride) between successive frames. Default is 512.</p></li>
+<li><p><strong>window_length</strong> – int, optional
+The length of the window function applied to each frame. If None, it defaults to <cite>n_fft</cite>.
+Must be less than or equal to <cite>n_fft</cite>.</p></li>
+<li><p><strong>center</strong> – bool, optional
+If True, the signal is padded such that the t-th frame is centered at time t*hop_size.
+Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray
+A 1D or 2D numpy array containing the reconstructed audio signal. The shape is (samples, channels)
+if the input was 3D, otherwise (samples,).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RythmForgeValueError</strong> – If <cite>window_length</cite> is greater than <cite>n_fft</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.magnitude">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">magnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">complex_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rythm_forge/core/feature_functions.html#magnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.magnitude" title="Link to this definition"></a></dt>
+<dd><p>Converts matrix filled with complex values to matrix of magnitudes of elements, similar to np.abs(array)
+:param complex_matrix: np.ndarray</p>
+<blockquote>
+<div><p>Array with complex values, most often from stft</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.mel_filter_bank">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">mel_filter_bank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_fft</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/rythm_forge/core/feature_functions.html#mel_filter_bank"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.mel_filter_bank" title="Link to this definition"></a></dt>
+<dd><p>Create a Mel filter-bank.
+This produces a linear transformation matrix to project FFT bins onto Mel-frequency bins.
+:param sr : int &gt; 0 [scalar]</p>
+<blockquote>
+<div><p>Sampling rate of the incoming signal.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_fft</strong> – int &gt; 0 [scalar]
+Number of FFT components</p></li>
+<li><p><strong>n_mel</strong> – int &gt; 0 [scalar]
+number of Mel bands to generate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>M np.ndarray [shape=(n_mels, 1 + n_fft/2)]
+Mel transform matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.mel_to_hz">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">mel_to_hz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rythm_forge/core/feature_functions.html#mel_to_hz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.mel_to_hz" title="Link to this definition"></a></dt>
+<dd><p>Converts Mels to Hz
+:param array: np.ndarray of values in Mels to be converted to Hz</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.melspectrogram">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">melspectrogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stft_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_fft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/rythm_forge/core/feature_functions.html#melspectrogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.melspectrogram" title="Link to this definition"></a></dt>
+<dd><p>Convert an STFT matrix to a mel spectrogram.</p>
+<p>This function transforms a Short-Time Fourier Transform (STFT) matrix into a mel spectrogram,
+where the frequency axis is mapped to the mel scale, which is a perceptually motivated scale of pitches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stft_matrix</strong> – np.ndarray
+The input STFT matrix of shape (…, n_freqs, n_times), representing the magnitude of the STFT of the audio signal.</p></li>
+<li><p><strong>n_fft</strong> – int, optional, default=2048
+The number of FFT components, corresponding to the number of frequency bins in the STFT. This value determines the resolution of the frequency axis.</p></li>
+<li><p><strong>sr</strong> – int, optional, default=44100
+The sample rate of the audio signal. This is used to compute the mel filter bank.</p></li>
+<li><p><strong>n_mels</strong> – int, optional, default=128
+The number of mel bands to generate. This determines the resolution of the mel scale.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray
+The mel spectrogram of shape (…, n_mels, n_times), where the frequency bins are replaced by mel bands.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.power_to_dB">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">power_to_dB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rythm_forge/core/feature_functions.html#power_to_dB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.power_to_dB" title="Link to this definition"></a></dt>
+<dd><p>Convert a power spectrogram to decibel (dB) units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>S</strong> – np.ndarray
+Input power spectrogram.</p></li>
+<li><p><strong>ref</strong> – float or callable
+Reference value. If scalar, amplitude is scaled relative to <cite>ref</cite>. If callable, the reference value is computed as <cite>ref(S)</cite>.</p></li>
+<li><p><strong>amin</strong> – float
+Minimum threshold for <cite>S</cite> and <cite>ref</cite>.</p></li>
+<li><p><strong>top_db</strong> – float
+Threshold the output at <cite>top_db</cite> below the peak.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray
+The dB-scaled spectrogram.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.resample">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/rythm_forge/core/feature_functions.html#resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.resample" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Resample a time series from sr to new_sr</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> – np.ndarray
+A 1D or 2D numpy array of input audio samples, with each row being different channel</p></li>
+<li><p><strong>sr</strong> – int
+Original sampling rate at which y has been acquired.</p></li>
+<li><p><strong>new_sr</strong> – int
+Target sampling rate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>,int
+y_hat: mp.ndarray, y resampled from sr to new_sr
+new_sr:int sampling rate used in resampling</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rythm_forge.core.stft">
+<span class="sig-prename descclassname"><span class="pre">rythm_forge.core.</span></span><span class="sig-name descname"><span class="pre">stft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_fft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rythm_forge/core/fft_functions.html#stft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rythm_forge.core.stft" title="Link to this definition"></a></dt>
+<dd><p>Compute the Short-Time Fourier Transform (STFT) of the input samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> – np.ndarray
+A 1D or 2D numpy array of input audio samples. If 1D, it is assumed to be a single channel.</p></li>
+<li><p><strong>n_fft</strong> – int, optional
+The number of frequency bins. Default is 2048. Must be a power of 2.</p></li>
+<li><p><strong>hop_size</strong> – int, optional
+The hop size (stride) between successive frames. Default is 512.</p></li>
+<li><p><strong>window_length</strong> – int, optional
+The length of the window function applied to each frame. If None, it defaults to <cite>n_fft</cite>.
+Must be less than or equal to <cite>n_fft</cite>.</p></li>
+<li><p><strong>center</strong> – bool, optional
+If True, the signal is padded such that the t-th frame is centered at time t*hop_size.
+Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray
+A 2D or 3D numpy array containing the STFT of the input samples. The shape is (channels, frequency_bins, frames)
+if the input is 2D, otherwise (frequency_bins, frames).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RythmForgeValueError</strong> – If <cite>window_length</cite> is greater than <cite>n_fft</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-left" title="Spectrogram &amp; Melspectrogram" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="display.html" class="btn btn-neutral float-right" title="Display" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Damian Baraniak Piotr Patek.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
