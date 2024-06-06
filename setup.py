@@ -93,6 +93,9 @@ setup(
     ],
     python_requires='>=3.10',
     install_requires=[
+        "numpy>=1.2",
+        "matplotlib>=3.4",
+        "pybind11"
     ],
     ext_modules=[CMakeExtension("rythm_forge._lib.rythm_forge_load_cpp"),
                  CMakeExtension("rythm_forge._lib.rythm_forge_core_cpp")],
