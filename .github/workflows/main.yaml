@@ -6,7 +6,7 @@ on:
     branches:
       - "main"
       - "ci"
-    types: [opened]
+    types: [ opened ]
 
 
 jobs:
@@ -28,73 +28,73 @@ jobs:
           ruff check rythm_forge/
 
   ubuntu_build:
-      runs-on: ubuntu-22.04
-      needs: linting
-      steps:
-        - name: Setup workspace
-          run: |
-            sudo apt update
-            sudo apt install python3.10
-            pip3 install pybind11[global]
-            pip3 install pytest
-            pip3 install conan
-        - uses: actions/checkout@v3
-        - name: Build
-          run: |
-            mkdir -p build
-            conan profile detect --force
-            conan install . --output-folder=build/ --build=missing
-            cd build
-            cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" ..
-            cmake --build . --target rythm_forge_cpp_unit_tests
+    runs-on: ubuntu-22.04
+    needs: linting
+    steps:
+      - name: Setup workspace
+        run: |
+          sudo apt update
+          sudo apt install python3.10
+          pip3 install pybind11[global]
+          pip3 install pytest
+          pip3 install conan
+      - uses: actions/checkout@v3
+      - name: Build
+        run: |
+          mkdir -p build
+          conan profile detect --force
+          conan install . --output-folder=build/ --build=missing
+          cd build
+          cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" ..
+          cmake --build . --target rythm_forge_cpp_unit_tests
 
-        - name: Run Cpp tests
-          run: |
-            cd build/src/tests/
-            ctest
+      - name: Run Cpp tests
+        run: |
+          cd build/
+          ./src/tests/rythm_forge_cpp_unit_tests 
 
-        - name: Install RythmForge python package
-          run: |
-            pip3 install .
-        - name: Run Python tests
-          run: |
-            pytest tests/
+      - name: Install RythmForge python package
+        run: |
+          pip3 install .
+      - name: Run Python tests
+        run: |
+          pytest tests/
 
   windows_build:
-      runs-on: windows-latest
-      needs: linting
-      steps:
-        - name: Setup Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.10'
-        - name: Setup workspace
-          run: |
-            python3 --version
-            pip3 install pybind11[global]
-            pip3 install pytest
-            pip3 install conan
-        - uses: actions/checkout@v3
-        - name: Build
-          run: |
-            mkdir -p build
-            conan profile detect --force
-            conan install . --output-folder=build/ --build=missing
-            cd build
-            cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" ..
-            cmake --build . --target rythm_forge_cpp_unit_tests
+    runs-on: windows-latest
+    needs: linting
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Setup workspace
+        run: |
+          python3 --version
+          pip3 install pybind11[global]
+          pip3 install pytest
+          pip3 install conan
+      - uses: actions/checkout@v3
+      - name: Build
+        run: |
+          mkdir -p build
+          conan profile detect --force
+          conan install . --output-folder=build/ --build=missing
+          cd build
+          cmake -DCMAKE_PREFIX_PATH=$(python3 -m site --user-site) -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" ..
+          cmake --build . --target rythm_forge_cpp_unit_tests
 
-        - name: Run Cpp tests
-          run: |
-            cd build\src\tests\
-            ctest
+      - name: Run Cpp tests
+        run: |
+          cd build\src\tests\
+          ctest
 
-        - name: Install RythmForge python package
-          run: |
-            pip3 install .
-        - name: Run Python tests
-          run: |
-            pytest tests/
+      - name: Install RythmForge python package
+        run: |
+          pip3 install .
+      - name: Run Python tests
+        run: |
+          pytest tests/
 
         
 
